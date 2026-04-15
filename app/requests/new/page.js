@@ -68,7 +68,7 @@ export default function NewRequest() {
           </div>
           <div>
             <label className="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Weight (kg)</label>
-            <input required type="number" step="0.5" min="0.1" placeholder="2.5"
+            <input required type="number" step="any" min="0.1" placeholder="2.5"
               value={form.weight_kg} onChange={e => set('weight_kg', e.target.value)}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-400"/>
           </div>
