@@ -94,7 +94,7 @@ export default function NewTrip() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">Available Weight (kg)</label>
-            <input required type="number" step="any" min="0.1" placeholder="5"
+            <input required type="number" step="0.1" min="0.1" placeholder="5"
               value={form.available_weight_kg} onChange={e => set('available_weight_kg', e.target.value)}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-400"/>
           </div>
