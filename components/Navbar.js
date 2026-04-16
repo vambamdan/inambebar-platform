@@ -52,14 +52,6 @@ export default function Navbar() {
             {t.travelCompanion}
           </Link>
 
-          {/* Language Toggle */}
-          <button
-            onClick={toggleLang}
-            className="text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 hover:border-amber-400 transition-colors"
-            style={{color: '#1A2744', fontFamily: lang === 'en' ? "'Vazirmatn', sans-serif" : 'inherit'}}>
-            {lang === 'en' ? 'فارسی' : 'English'}
-          </button>
-
           {user ? (
             <>
               <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
@@ -90,6 +82,14 @@ export default function Navbar() {
               </Link>
             </>
           )}
+
+          {/* Language Toggle — far right */}
+          <button
+            onClick={toggleLang}
+            className="text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 hover:border-amber-400 transition-colors"
+            style={{color: '#1A2744', fontFamily: lang === 'en' ? "'Vazirmatn', sans-serif" : 'inherit'}}>
+            {lang === 'en' ? 'فارسی' : 'English'}
+          </button>
         </div>
 
         {/* Mobile: lang toggle + hamburger */}
