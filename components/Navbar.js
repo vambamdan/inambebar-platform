@@ -55,6 +55,10 @@ export default function Navbar() {
               <Link href={`/profile/${user?.id}`} className="text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
                 My Profile
               </Link>
+              <Link href="/verify" className="text-sm font-semibold px-3 py-1.5 rounded-lg transition-colors"
+                style={{background:'rgba(224,123,41,0.1)', color:'#E07B29'}}>
+                Get Verified
+              </Link>
               <button onClick={handleSignOut}
                 className="text-sm font-semibold px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
                 Sign Out
