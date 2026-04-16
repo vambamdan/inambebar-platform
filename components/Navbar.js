@@ -52,6 +52,9 @@ export default function Navbar() {
               <Link href="/matches" className="text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
                 My Matches
               </Link>
+              <Link href={`/profile/${user?.id}`} className="text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+                My Profile
+              </Link>
               <button onClick={handleSignOut}
                 className="text-sm font-semibold px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
                 Sign Out

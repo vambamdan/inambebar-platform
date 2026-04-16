@@ -74,7 +74,16 @@ export default function Home() {
       </div>
 
       {/* CTA */}
-      <div className="py-16 text-center" style={{background: '#E07B29'}}>
+      {/* Footer links */}
+    <div className="py-6 text-center" style={{background:'#1A2744'}}>
+      <div className="flex justify-center gap-6 text-xs" style={{color:'rgba(255,255,255,0.35)'}}>
+        <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+        <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+        <span>© 2026 Inambebar</span>
+      </div>
+    </div>
+
+    <div className="py-16 text-center" style={{background: '#E07B29'}}>
         <h2 className="text-3xl font-black text-white mb-4">Ready to get started?</h2>
         <p className="text-white/80 mb-8">Join for free. No commitment.</p>
         <Link href="/auth?tab=signup"
