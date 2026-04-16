@@ -73,7 +73,7 @@ export default function NewTrip() {
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-400">
               <option value="">{isFa ? 'انتخاب شهر...' : 'Select city...'}</option>
               <optgroup label={isFa ? 'شهرهای ایران' : 'Iranian Cities'}>
-                {IRANIAN_CITIES.map(city => <option key={city} value={city}>{city}</option>)}
+                {IRANIAN_CITIES.map(city => <option key={city.en} value={city.en}>{isFa ? city.fa : city.en}</option>)}
               </optgroup>
               <optgroup label={isFa ? 'سایر شهرها' : 'Other Cities'}>
                 {['Toronto','London','Dubai','Stockholm','Frankfurt','Amsterdam','Los Angeles','Paris','Rome','Muscat','Doha','Kuala Lumpur','Seoul','Sydney'].map(city => (
