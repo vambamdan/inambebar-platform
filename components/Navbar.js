@@ -28,10 +28,10 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 shadow-sm" style={fontStyle}>
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center">
 
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        {/* LEFT — Logo */}
+        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center text-xl"
                style={{background: '#E07B29'}}>📦</div>
           <div className="leading-tight">
@@ -40,8 +40,8 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-5">
+        {/* MIDDLE — Nav links, pushed to right with ml-auto */}
+        <div className="hidden md:flex items-center gap-5 ml-auto">
           <Link href="/trips" className="text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
             {t.findTravelers}
           </Link>
@@ -82,18 +82,20 @@ export default function Navbar() {
               </Link>
             </>
           )}
+        </div>
 
-          {/* Language Toggle — far right */}
+        {/* RIGHT — Language toggle, pinned to far right with a divider */}
+        <div className="hidden md:flex items-center ml-6 pl-6 border-l border-gray-200 flex-shrink-0">
           <button
             onClick={toggleLang}
-            className="text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 hover:border-amber-400 transition-colors"
+            className="text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition-colors"
             style={{color: '#1A2744', fontFamily: lang === 'en' ? "'Vazirmatn', sans-serif" : 'inherit'}}>
             {lang === 'en' ? 'فارسی' : 'English'}
           </button>
         </div>
 
         {/* Mobile: lang toggle + hamburger */}
-        <div className="md:hidden flex items-center gap-2">
+        <div className="md:hidden flex items-center gap-2 ml-auto">
           <button onClick={toggleLang}
             className="text-xs font-bold px-2 py-1 rounded border border-gray-200"
             style={{fontFamily: lang === 'en' ? "'Vazirmatn', sans-serif" : 'inherit'}}>
