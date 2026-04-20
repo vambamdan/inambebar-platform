@@ -26,7 +26,7 @@ export default function Home() {
              style={{background: 'radial-gradient(circle, rgba(245,160,74,0.1) 0%, transparent 70%)', filter: 'blur(40px)'}} />
 
         <div className="max-w-6xl mx-auto px-4 py-24 md:py-32">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className={`grid md:grid-cols-2 items-center ${isFa ? 'gap-20' : 'gap-12'}`}>
 
             {/* LEFT — Copy (becomes RIGHT in RTL via grid flip) */}
             <div className={`text-center ${isFa ? 'md:text-right' : 'md:text-left'}`}>
