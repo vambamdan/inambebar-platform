@@ -99,6 +99,16 @@ body {
   left: 0;
 }
 
+/* RTL: grow underline from right instead */
+[dir="rtl"] .nav-link::after {
+  left: auto;
+  right: 50%;
+  transition: width 0.25s ease, right 0.25s ease;
+}
+[dir="rtl"] .nav-link:hover::after {
+  right: 0;
+}
+
 /* ── Card hover — lift + shadow ─────────────────────────── */
 
 .card-hover {

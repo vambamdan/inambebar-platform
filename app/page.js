@@ -1,14 +1,25 @@
+'use client'
 import Link from 'next/link'
+import { useLanguage } from '@/lib/LanguageContext'
+
+const STEPS = [
+  { icon: '🔍', titleKey: 'step1Title', descKey: 'step1Desc' },
+  { icon: '💬', titleKey: 'step2Title', descKey: 'step2Desc' },
+  { icon: '✅', titleKey: 'step3Title', descKey: 'step3Desc' },
+]
 
 export default function Home() {
+  const { t, isFa } = useLanguage()
+  const vasFont = { fontFamily: "'Vazirmatn', sans-serif" }
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={isFa ? vasFont : {}}>
 
       {/* ── HERO ─────────────────────────────────────────────── */}
       <div className="relative overflow-hidden"
            style={{background: 'linear-gradient(135deg, #0F1A35 0%, #1A2744 50%, #1D2B4F 100%)'}}>
 
-        {/* Ambient glow orbs — pure CSS, zero cost */}
+        {/* Ambient glow orbs */}
         <div className="absolute top-16 left-1/4 w-96 h-96 rounded-full pointer-events-none"
              style={{background: 'radial-gradient(circle, rgba(224,123,41,0.18) 0%, transparent 70%)', filter: 'blur(60px)'}} />
         <div className="absolute bottom-0 right-1/3 w-64 h-64 rounded-full pointer-events-none"
@@ -17,8 +28,8 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 py-24 md:py-32">
           <div className="grid md:grid-cols-2 gap-12 items-center">
 
-            {/* LEFT — Copy */}
-            <div className="text-center md:text-left">
+            {/* LEFT — Copy (becomes RIGHT in RTL via grid flip) */}
+            <div className={`text-center ${isFa ? 'md:text-right' : 'md:text-left'}`}>
 
               {/* Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold mb-8 animate-fade-up"
@@ -29,60 +40,62 @@ export default function Home() {
                      boxShadow: '0 0 20px rgba(224,123,41,0.15)',
                    }}>
                 <span className="w-2 h-2 rounded-full animate-pulse" style={{background: '#F5A04A'}} />
-                Now accepting early members
+                {t.earlyMembers}
               </div>
 
               {/* Headline */}
               <h1 className="text-5xl md:text-6xl font-black text-white mb-4 leading-tight tracking-tight animate-fade-up delay-1">
-                Send it home with someone<br />
+                {t.heroTitle1}<br />
                 <span style={{
                   background: 'linear-gradient(90deg, #E07B29, #F5A04A)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
                 }}>
-                  who&apos;s already going.
+                  {t.heroTitle2}
                 </span>
               </h1>
 
-              {/* Persian sub-headline */}
+              {/* Bilingual sub-line */}
               <p className="text-xl mb-4 animate-fade-up delay-2"
-                 style={{color: 'rgba(255,255,255,0.55)', fontFamily: "'Vazirmatn', sans-serif"}}>
-                اینم ببر — با مسافر ارسال کن
+                 style={{
+                   color: 'rgba(255,255,255,0.55)',
+                   fontFamily: isFa ? 'inherit' : "'Vazirmatn', sans-serif",
+                 }}>
+                {t.heroSubFa}
               </p>
 
               <p className="text-lg mb-10 leading-relaxed animate-fade-up delay-2"
                  style={{color: 'rgba(255,255,255,0.45)'}}>
-                Connect with verified Iranian travelers flying your route. Send packages safely, affordably, and with full accountability.
+                {t.heroDesc}
               </p>
 
-              {/* CTAs */}
+              {/* CTAs — justify-start adapts automatically to RTL flex direction */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-10 animate-fade-up delay-3">
                 <Link href="/trips"
                   className="btn-primary px-8 py-4 rounded-xl text-white font-bold text-base text-center"
                   style={{background: '#E07B29'}}>
-                  Find a Traveler →
+                  {t.findTravelerBtn}
                 </Link>
                 <Link href="/requests"
                   className="btn-secondary px-8 py-4 rounded-xl font-bold text-base text-center"
                   style={{background: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.15)'}}>
-                  Post a Shipment
+                  {t.postShipmentBtn}
                 </Link>
               </div>
 
               {/* Stat pills */}
-              <div className="flex flex-wrap justify-center md:justify-start gap-3 animate-fade-up delay-4">
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start animate-fade-up delay-4">
                 {[
-                  {icon: '🛫', num: '4',     label: 'Active Routes'},
-                  {icon: '✅', num: '100%',  label: 'ID Verified'},
-                  {icon: '🎁', num: 'Free',  label: 'To Join'},
+                  {icon: '🛫', label: `4 ${t.activeRoutes}`},
+                  {icon: '✅', label: `100% ${t.idVerified}`},
+                  {icon: '🎁', label: t.freeToJoin},
                 ].map(s => (
                   <div key={s.label}
                        className="flex items-center gap-2 px-4 py-2 rounded-full"
                        style={{background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)'}}>
                     <span className="text-sm">{s.icon}</span>
-                    <span className="text-white font-bold text-sm">{s.num}</span>
-                    <span className="text-sm" style={{color: 'rgba(255,255,255,0.45)'}}>{s.label}</span>
+                    <span className="text-white text-sm">{s.label}</span>
                   </div>
                 ))}
               </div>
@@ -95,7 +108,7 @@ export default function Home() {
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-3"
                    style={{background: 'rgba(110,231,183,0.12)', color: '#6EE7B7', border: '1px solid rgba(110,231,183,0.25)'}}>
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                New match found
+                {t.newMatchFound}
               </div>
 
               {/* Card */}
@@ -106,9 +119,10 @@ export default function Home() {
                      backdropFilter: 'blur(20px)',
                    }}>
 
-                {/* Route header */}
+                {/* Route — kept in English as it's illustrative data */}
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-sm font-bold text-white flex items-center gap-2">
+                  <div className="text-sm font-bold text-white flex items-center gap-2"
+                       style={{fontFamily: 'inherit', direction: 'ltr'}}>
                     <span>🇮🇷</span>
                     <span style={{color: 'rgba(255,255,255,0.35)'}}>→</span>
                     <span>🇨🇦</span>
@@ -120,7 +134,7 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* Traveler info */}
+                {/* Traveler */}
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-lg text-white flex-shrink-0"
                        style={{background: 'linear-gradient(135deg, #E07B29, #F5A04A)'}}>
@@ -128,27 +142,26 @@ export default function Home() {
                   </div>
                   <div>
                     <div className="font-semibold text-white text-sm">Ali H.</div>
-                    <div className="text-xs" style={{color: 'rgba(255,255,255,0.45)'}}>⭐ 4.9 · 23 trips</div>
+                    <div className="text-xs" style={{color: 'rgba(255,255,255,0.45)', direction: 'ltr'}}>⭐ 4.9 · 23 trips</div>
                   </div>
                 </div>
 
                 {/* Detail chips */}
                 <div className="grid grid-cols-2 gap-2 mb-4">
-                  <div className="rounded-xl p-3" style={{background: 'rgba(255,255,255,0.05)'}}>
+                  <div className="rounded-xl p-3" style={{background: 'rgba(255,255,255,0.05)', direction: 'ltr'}}>
                     <div className="text-xs mb-1" style={{color: 'rgba(255,255,255,0.4)'}}>Departs</div>
                     <div className="text-white text-sm font-semibold">May 3</div>
                   </div>
-                  <div className="rounded-xl p-3" style={{background: 'rgba(255,255,255,0.05)'}}>
+                  <div className="rounded-xl p-3" style={{background: 'rgba(255,255,255,0.05)', direction: 'ltr'}}>
                     <div className="text-xs mb-1" style={{color: 'rgba(255,255,255,0.4)'}}>Available</div>
                     <div className="text-white text-sm font-semibold">8 kg · $6/kg</div>
                   </div>
                 </div>
 
-                {/* Card CTA */}
                 <Link href="/trips"
                   className="btn-primary block w-full py-2.5 rounded-xl text-sm font-bold text-white text-center"
                   style={{background: '#E07B29'}}>
-                  Contact Traveler →
+                  {t.contactTraveler}
                 </Link>
               </div>
             </div>
@@ -160,29 +173,22 @@ export default function Home() {
       {/* ── HOW IT WORKS ─────────────────────────────────────── */}
       <div className="py-24" style={{background: '#FFF5E6'}}>
         <div className="max-w-5xl mx-auto px-4">
-
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-black mb-3" style={{color: '#1A2744'}}>How it works</h2>
-            <p style={{color: '#9CA3AF'}}>Three steps for senders. Three steps for travelers.</p>
+            <h2 className="text-3xl font-black mb-3" style={{color: '#1A2744'}}>{t.howItWorks}</h2>
+            <p style={{color: '#9CA3AF'}}>{t.howItWorksDesc}</p>
           </div>
-
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {icon: '🔍', title: 'Find a traveler', desc: 'Search by route and date. Browse verified travelers with ratings, reviews, and available space.'},
-              {icon: '💬', title: 'Chat in-platform', desc: 'Agree on price and details entirely inside Inambebar. Every message is logged for your protection.'},
-              {icon: '✅', title: 'Pay & confirm', desc: 'Pay into secure escrow. Released only when your recipient confirms delivery. Both parties photograph the handoff.'},
-            ].map((step, i) => (
+            {STEPS.map((step, i) => (
               <div key={i}
                    className="bg-white rounded-2xl p-8 card-hover cursor-default"
                    style={{border: '1px solid rgba(26,39,68,0.06)', boxShadow: '0 2px 8px rgba(26,39,68,0.04)'}}>
-                {/* Numbered circle */}
-                <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-white text-lg mb-5 flex-shrink-0"
+                <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-white text-lg mb-5"
                      style={{background: 'linear-gradient(135deg, #E07B29, #F5A04A)'}}>
                   {i + 1}
                 </div>
                 <div className="text-3xl mb-3">{step.icon}</div>
-                <h3 className="font-bold text-lg mb-2" style={{color: '#1A2744'}}>{step.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
+                <h3 className="font-bold text-lg mb-2" style={{color: '#1A2744'}}>{t[step.titleKey]}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{t[step.descKey]}</p>
               </div>
             ))}
           </div>
@@ -191,16 +197,15 @@ export default function Home() {
 
       {/* ── CTA ──────────────────────────────────────────────── */}
       <div className="py-20 text-center relative overflow-hidden" style={{background: '#E07B29'}}>
-        {/* Texture overlays */}
         <div className="absolute inset-0 pointer-events-none"
              style={{backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.05) 0%, transparent 50%)'}} />
         <div className="relative">
-          <h2 className="text-3xl font-black text-white mb-3">Ready to get started?</h2>
-          <p className="mb-8" style={{color: 'rgba(255,255,255,0.75)'}}>Join for free. No commitment.</p>
+          <h2 className="text-3xl font-black text-white mb-3">{t.readyToStart}</h2>
+          <p className="mb-8" style={{color: 'rgba(255,255,255,0.75)'}}>{t.joinFree}</p>
           <Link href="/auth?tab=signup"
             className="btn-secondary inline-block px-10 py-4 rounded-xl font-bold text-base bg-white"
             style={{color: '#E07B29', boxShadow: '0 8px 30px rgba(0,0,0,0.15)'}}>
-            Create Your Account →
+            {t.createAccount}
           </Link>
         </div>
       </div>
