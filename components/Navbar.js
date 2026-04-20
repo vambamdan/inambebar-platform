@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
@@ -8,8 +8,10 @@ import { useLanguage } from '@/lib/LanguageContext'
 export default function Navbar() {
   const [user, setUser] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
   const router = useRouter()
-  const { t, setLang, lang, isFa } = useLanguage()
+  const { t, toggleLang, lang, isFa } = useLanguage()
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user))
@@ -19,12 +21,25 @@ export default function Navbar() {
     return () => listener.subscription.unsubscribe()
   }, [])
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   const handleSignOut = async () => {
+    setDropdownOpen(false)
     await supabase.auth.signOut()
     router.push('/')
   }
 
   const fontStyle = isFa ? { fontFamily: "'Vazirmatn', sans-serif" } : {}
+  const userInitial = user?.email?.[0]?.toUpperCase() ?? '?'
 
   return (
     <nav
@@ -38,9 +53,9 @@ export default function Navbar() {
         ...fontStyle,
       }}
     >
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center">
+      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center gap-6">
 
-        {/* LEFT — Logo */}
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 flex-shrink-0 transition-opacity hover:opacity-80">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center text-xl"
                style={{background: '#E07B29'}}>📦</div>
@@ -50,86 +65,112 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* MIDDLE — Nav links */}
-        <div className="hidden md:flex items-center gap-5 ml-auto">
-          <Link href="/trips"
-            className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+        {/* Public nav links — always visible on desktop */}
+        <div className="hidden md:flex items-center gap-5 flex-1">
+          <Link href="/trips" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors whitespace-nowrap">
             {t.findTravelers}
           </Link>
-          <Link href="/requests"
-            className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+          <Link href="/requests" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors whitespace-nowrap">
             {t.sendPackage}
           </Link>
-          <Link href="/companion"
-            className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+          <Link href="/companion" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors whitespace-nowrap">
             {t.travelCompanion}
           </Link>
+        </div>
 
+        {/* Right-side actions */}
+        <div className="hidden md:flex items-center gap-3 ml-auto flex-shrink-0">
           {user ? (
-            <>
-              <Link href="/dashboard"
-                className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
-                {t.dashboard}
-              </Link>
-              <Link href="/matches"
-                className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
-                {t.myMatches}
-              </Link>
-              <Link href={`/profile/${user?.id}`}
-                className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
-                {t.myProfile}
-              </Link>
-              <Link href="/verify"
-                className="btn-primary text-sm font-semibold px-3 py-1.5 rounded-lg transition-colors"
-                style={{background: 'rgba(224,123,41,0.1)', color: '#E07B29'}}>
-                {t.getVerified}
-              </Link>
+            /* Logged-in: avatar + dropdown */
+            <div className="relative" ref={dropdownRef}>
               <button
-                onClick={handleSignOut}
-                className="text-sm font-semibold px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors active:scale-95"
-                style={{transition: 'transform 0.15s ease, background 0.15s ease'}}>
-                {t.signOut}
+                onClick={() => setDropdownOpen(o => !o)}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0 active:scale-95"
+                style={{
+                  background: 'linear-gradient(135deg, #E07B29, #F5A04A)',
+                  transition: 'transform 0.15s ease, box-shadow 0.2s ease',
+                  boxShadow: dropdownOpen ? '0 0 0 3px rgba(224,123,41,0.25)' : '0 2px 8px rgba(224,123,41,0.3)',
+                }}>
+                {userInitial}
               </button>
-            </>
+
+              {dropdownOpen && (
+                <div
+                  className="absolute right-0 top-12 w-52 rounded-2xl py-1.5 z-50"
+                  style={{
+                    background: 'rgba(255,255,255,0.96)',
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(0,0,0,0.08)',
+                    boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
+                  }}>
+                  <Link href="/dashboard"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                    <span className="text-base">📊</span> {t.dashboard}
+                  </Link>
+                  <Link href="/matches"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                    <span className="text-base">💬</span> {t.myMatches}
+                  </Link>
+                  <Link href={`/profile/${user?.id}`}
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                    <span className="text-base">👤</span> {t.myProfile}
+                  </Link>
+                  <Link href="/verify"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold hover:bg-orange-50 transition-colors"
+                    style={{color: '#E07B29'}}>
+                    <span className="text-base">✅</span> {t.getVerified}
+                  </Link>
+                  <div className="my-1 border-t border-gray-100" />
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
+                    <span className="text-base">↩︎</span> {t.signOut}
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
+            /* Logged-out: Sign In + Get Started */
             <>
-              <Link href="/auth"
-                className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+              <Link href="/auth" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
                 {t.signIn}
               </Link>
               <Link href="/auth?tab=signup"
-                className="btn-shimmer text-sm font-semibold px-4 py-2 rounded-lg text-white"
+                className="btn-shimmer text-sm font-semibold px-4 py-2 rounded-lg text-white whitespace-nowrap"
                 style={{background: '#1A2744'}}>
                 {t.getStarted}
               </Link>
             </>
           )}
+
+          {/* Language toggle */}
+          <div className="pl-3 border-l border-gray-200">
+            <button onClick={toggleLang}
+              className="text-xs font-bold px-2.5 py-1.5 rounded-lg border border-gray-200 hover:border-amber-400 hover:text-amber-600 active:scale-95"
+              style={{
+                color: '#1A2744',
+                minWidth: '36px',
+                textAlign: 'center',
+                transition: 'color 0.2s ease, border-color 0.2s ease, transform 0.15s ease',
+              }}>
+              {lang === 'fa' ? 'فا' : lang.toUpperCase()}
+            </button>
+          </div>
         </div>
 
-        {/* RIGHT — Language cycle button */}
-        <div className="hidden md:flex items-center ml-4 pl-4 border-l border-gray-200 flex-shrink-0">
-          <button onClick={toggleLang}
-            className="text-xs font-bold px-2.5 py-1.5 rounded-lg border border-gray-200 hover:border-amber-400 hover:text-amber-600 active:scale-95"
-            style={{
-              color: '#1A2744',
-              minWidth: '36px',
-              textAlign: 'center',
-              transition: 'color 0.2s ease, border-color 0.2s ease, transform 0.15s ease',
-            }}>
-            {lang === 'fa' ? 'فا' : lang.toUpperCase()}
-          </button>
-        </div>
-
-        {/* Mobile: lang cycle button + hamburger */}
+        {/* Mobile: lang + hamburger */}
         <div className="md:hidden flex items-center gap-2 ml-auto">
           <button onClick={toggleLang}
             className="text-xs font-bold px-2 py-1 rounded border border-gray-200 active:scale-95"
             style={{minWidth: '32px', textAlign: 'center', transition: 'transform 0.15s ease'}}>
             {lang === 'fa' ? 'فا' : lang.toUpperCase()}
           </button>
-          <button
-            className="p-2 active:scale-95"
-            style={{transition: 'transform 0.15s ease'}}
+          <button className="p-2 active:scale-95" style={{transition: 'transform 0.15s ease'}}
             onClick={() => setMenuOpen(!menuOpen)}>
             <div className="w-5 h-0.5 bg-gray-600 mb-1" />
             <div className="w-5 h-0.5 bg-gray-600 mb-1" />
@@ -147,19 +188,20 @@ export default function Navbar() {
           <Link href="/companion" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.travelCompanion}</Link>
           {user ? (
             <>
-              <Link href="/dashboard" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.dashboard}</Link>
-              <Link href="/matches" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myMatches}</Link>
-              <Link href={`/profile/${user?.id}`} className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myProfile}</Link>
-              <Link href="/verify" className="text-sm font-medium" style={{color: '#E07B29'}} onClick={() => setMenuOpen(false)}>{t.getVerified}</Link>
-              <button onClick={handleSignOut} className="text-sm font-semibold text-left text-red-500">{t.signOut}</button>
+              <div className="border-t border-gray-100 pt-3 flex flex-col gap-3">
+                <Link href="/dashboard" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.dashboard}</Link>
+                <Link href="/matches" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myMatches}</Link>
+                <Link href={`/profile/${user?.id}`} className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myProfile}</Link>
+                <Link href="/verify" className="text-sm font-medium" style={{color: '#E07B29'}} onClick={() => setMenuOpen(false)}>{t.getVerified}</Link>
+                <button onClick={handleSignOut} className="text-sm font-semibold text-left text-red-500">{t.signOut}</button>
+              </div>
             </>
           ) : (
             <>
               <Link href="/auth" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.signIn}</Link>
               <Link href="/auth?tab=signup"
                 className="text-sm font-semibold text-white px-4 py-2 rounded-lg text-center"
-                style={{background: '#1A2744'}}
-                onClick={() => setMenuOpen(false)}>
+                style={{background: '#1A2744'}} onClick={() => setMenuOpen(false)}>
                 {t.getStarted}
               </Link>
             </>
