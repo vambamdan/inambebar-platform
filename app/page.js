@@ -101,69 +101,114 @@ export default function Home() {
               </div>
             </div>
 
-            {/* RIGHT — Floating sample match card (desktop only) */}
-            <div className="hidden md:flex flex-col items-end animate-fade-up delay-3">
+            {/* RIGHT — Three floating feature cards (desktop only) */}
+            <div className="hidden md:flex flex-col items-end gap-4 animate-fade-up delay-3" dir="ltr">
 
-              {/* Notification chip */}
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-3"
+              {/* ── CARD 1: Match ──────────────────────────────── */}
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold self-end"
                    style={{background: 'rgba(110,231,183,0.12)', color: '#6EE7B7', border: '1px solid rgba(110,231,183,0.25)'}}>
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                 {t.newMatchFound}
               </div>
 
-              {/* Card */}
               <div className="animate-float w-full max-w-xs rounded-2xl p-5 shadow-2xl"
-                   style={{
-                     background: 'rgba(255,255,255,0.06)',
-                     border: '1px solid rgba(255,255,255,0.1)',
-                     backdropFilter: 'blur(20px)',
-                   }}>
-
-                {/* Route — kept in English as it's illustrative data */}
+                   style={{background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(20px)'}}>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-sm font-bold text-white flex items-center gap-2"
-                       style={{fontFamily: 'inherit', direction: 'ltr'}}>
+                  <div className="text-sm font-bold text-white flex items-center gap-2">
                     <span>🇮🇷</span>
                     <span style={{color: 'rgba(255,255,255,0.35)'}}>→</span>
                     <span>🇨🇦</span>
                     <span className="ml-1">Tehran → Toronto</span>
                   </div>
                   <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
-                        style={{background: 'rgba(110,231,183,0.15)', color: '#6EE7B7'}}>
-                    ✓ Verified
-                  </span>
+                        style={{background: 'rgba(110,231,183,0.15)', color: '#6EE7B7'}}>✓ Verified</span>
                 </div>
-
-                {/* Traveler */}
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-lg text-white flex-shrink-0"
-                       style={{background: 'linear-gradient(135deg, #E07B29, #F5A04A)'}}>
-                    A
-                  </div>
+                       style={{background: 'linear-gradient(135deg, #E07B29, #F5A04A)'}}>A</div>
                   <div>
                     <div className="font-semibold text-white text-sm">Ali H.</div>
-                    <div className="text-xs" style={{color: 'rgba(255,255,255,0.45)', direction: 'ltr'}}>⭐ 4.9 · 23 trips</div>
+                    <div className="text-xs" style={{color: 'rgba(255,255,255,0.45)'}}>⭐ 4.9 · 23 trips</div>
                   </div>
                 </div>
-
-                {/* Detail chips */}
                 <div className="grid grid-cols-2 gap-2 mb-4">
-                  <div className="rounded-xl p-3" style={{background: 'rgba(255,255,255,0.05)', direction: 'ltr'}}>
+                  <div className="rounded-xl p-3" style={{background: 'rgba(255,255,255,0.05)'}}>
                     <div className="text-xs mb-1" style={{color: 'rgba(255,255,255,0.4)'}}>Departs</div>
                     <div className="text-white text-sm font-semibold">May 3</div>
                   </div>
-                  <div className="rounded-xl p-3" style={{background: 'rgba(255,255,255,0.05)', direction: 'ltr'}}>
+                  <div className="rounded-xl p-3" style={{background: 'rgba(255,255,255,0.05)'}}>
                     <div className="text-xs mb-1" style={{color: 'rgba(255,255,255,0.4)'}}>Available</div>
                     <div className="text-white text-sm font-semibold">8 kg · $6/kg</div>
                   </div>
                 </div>
-
                 <Link href="/trips"
                   className="btn-primary block w-full py-2.5 rounded-xl text-sm font-bold text-white text-center"
                   style={{background: '#E07B29'}}>
                   {t.contactTraveler}
                 </Link>
               </div>
+
+              {/* ── CARD 2: Chat preview ───────────────────────── */}
+              <div className="animate-float-2 w-full max-w-xs rounded-2xl p-4 shadow-xl"
+                   style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)'}}>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm">💬</span>
+                    <span className="text-white text-xs font-bold">{t.chatLabel}</span>
+                  </div>
+                  <span className="text-xs px-2 py-0.5 rounded-full font-medium"
+                        style={{background: 'rgba(110,231,183,0.12)', color: '#6EE7B7'}}>
+                    🔒 {t.chatEncrypted}
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {/* Sender bubble */}
+                  <div className="flex justify-end">
+                    <div className="text-xs px-3 py-2 rounded-xl rounded-br-sm"
+                         style={{background: '#E07B29', color: 'white', maxWidth: '85%'}}>
+                      {t.chatMsg1}
+                    </div>
+                  </div>
+                  {/* Traveler reply */}
+                  <div className="flex justify-start items-end gap-1.5">
+                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0"
+                         style={{background: 'linear-gradient(135deg, #E07B29, #F5A04A)'}}>A</div>
+                    <div className="text-xs px-3 py-2 rounded-xl rounded-bl-sm"
+                         style={{background: 'rgba(255,255,255,0.1)', color: 'white', maxWidth: '80%'}}>
+                      {t.chatMsg2}
+                    </div>
+                  </div>
+                  {/* Sender follow-up */}
+                  <div className="flex justify-end">
+                    <div className="text-xs px-3 py-2 rounded-xl rounded-br-sm"
+                         style={{background: '#E07B29', color: 'white', maxWidth: '85%'}}>
+                      {t.chatMsg3}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── CARD 3: Escrow / delivery confirmed ────────── */}
+              <div className="animate-float-3 w-full max-w-[280px] rounded-2xl p-4 shadow-xl"
+                   style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)'}}>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-lg flex-shrink-0"
+                       style={{background: 'rgba(110,231,183,0.15)'}}>✅</div>
+                  <div>
+                    <div className="text-white text-xs font-bold">{t.packageDelivered}</div>
+                    <div className="text-xs" style={{color: 'rgba(255,255,255,0.45)'}}>$42 → Ali H.</div>
+                  </div>
+                </div>
+                <div className="h-1.5 rounded-full mb-1.5" style={{background: 'rgba(255,255,255,0.08)'}}>
+                  <div className="h-full w-full rounded-full"
+                       style={{background: 'linear-gradient(90deg, #6EE7B7, #34D399)'}} />
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-xs" style={{color: 'rgba(255,255,255,0.35)'}}>Escrow</span>
+                  <span className="text-xs font-semibold" style={{color: '#6EE7B7'}}>{t.escrowReleased}</span>
+                </div>
+              </div>
+
             </div>
 
           </div>
