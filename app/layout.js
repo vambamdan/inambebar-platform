@@ -1,5 +1,6 @@
 import './globals.css'
 import Navbar from '@/components/Navbar'
+import AirportStatusWidget from '@/components/AirportStatusWidget'
 import { LanguageProvider } from '@/lib/LanguageContext'
 
 export const metadata = {
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
       <body>
         <LanguageProvider>
           <Navbar />
+          <AirportStatusWidget />
           <main className="min-h-screen pt-16">
             {children}
           </main>
