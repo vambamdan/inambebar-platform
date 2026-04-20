@@ -16,8 +16,11 @@ export default function Home() {
     <div className="min-h-screen" style={isFa ? vasFont : {}}>
 
       {/* ── HERO ─────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden"
-           style={{background: 'linear-gradient(135deg, #0F1A35 0%, #1A2744 50%, #1D2B4F 100%)'}}>
+      <div className="relative overflow-hidden flex items-center"
+           style={{
+             minHeight: 'calc(100vh - 4rem)',
+             background: 'linear-gradient(135deg, #0F1A35 0%, #1A2744 50%, #1D2B4F 100%)',
+           }}>
 
         {/* Ambient glow orbs */}
         <div className="absolute top-16 left-1/4 w-96 h-96 rounded-full pointer-events-none"
@@ -25,7 +28,7 @@ export default function Home() {
         <div className="absolute bottom-0 right-1/3 w-64 h-64 rounded-full pointer-events-none"
              style={{background: 'radial-gradient(circle, rgba(245,160,74,0.1) 0%, transparent 70%)', filter: 'blur(40px)'}} />
 
-        <div className="max-w-6xl mx-auto px-4 py-14 md:py-20">
+        <div className="max-w-6xl mx-auto px-4 py-16 w-full">
           <div className="grid md:grid-cols-2 gap-12 items-center">
 
             {/* LEFT — Copy (becomes RIGHT in RTL via grid flip) */}
