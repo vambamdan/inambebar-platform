@@ -170,6 +170,62 @@ export default function AirportStatusWidget() {
           )}
         </div>
 
+        {/* Turkish carriers section */}
+        {data?.airlines?.length > 0 && (
+          <>
+            <div
+              className="px-4 pt-3 pb-2 text-xs font-bold"
+              style={{
+                color: 'rgba(255,255,255,0.45)',
+                borderTop: '1px solid rgba(255,255,255,0.07)',
+                letterSpacing: '0.04em',
+              }}
+            >
+              ✈ خطوط ترکیه به ایران
+            </div>
+            <div className="px-3 pb-3 space-y-2">
+              {data.airlines.map((airline) => {
+                const active = airline.status === 'active'
+                const color = active ? '#22C55E' : airline.status === 'quiet' ? '#6B7280' : '#374151'
+                return (
+                  <div
+                    key={airline.iata}
+                    className="rounded-xl px-3 py-2.5 flex items-center justify-between"
+                    style={{
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                    }}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className="w-2 h-2 rounded-full flex-shrink-0"
+                        style={{ background: color, boxShadow: active ? `0 0 7px ${color}` : 'none' }}
+                      />
+                      <div>
+                        <div className="text-white text-xs font-bold">{airline.nameFa}</div>
+                        <div className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                          {airline.name}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-left flex-shrink-0">
+                      <div
+                        className="text-xs font-bold"
+                        style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'monospace', letterSpacing: '0.05em' }}
+                      >
+                        {airline.iata}
+                      </div>
+                      <div className="text-xs" style={{ color }}>
+                        {active ? `${airline.flightsToIran} پرواز` : 'بدون پرواز'}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </>
+        )}
+
         {/* Footer */}
         <div
           className="px-4 pb-3 pt-1 text-xs"
