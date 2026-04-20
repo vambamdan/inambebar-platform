@@ -9,7 +9,7 @@ export default function Navbar() {
   const [user, setUser] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const router = useRouter()
-  const { t, toggleLang, lang, isFa } = useLanguage()
+  const { t, setLang, lang, isFa } = useLanguage()
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user))
@@ -106,31 +106,36 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* RIGHT — Language toggle */}
-        <div className="hidden md:flex items-center ml-6 pl-6 border-l border-gray-200 flex-shrink-0">
-          <button
-            onClick={toggleLang}
-            className="text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition-colors active:scale-95"
-            style={{
-              color: '#1A2744',
-              fontFamily: lang === 'en' ? "'Vazirmatn', sans-serif" : 'inherit',
-              transition: 'transform 0.15s ease, color 0.2s ease, border-color 0.2s ease',
-            }}>
-            {lang === 'en' ? 'فارسی' : 'English'}
-          </button>
+        {/* RIGHT — Language pills */}
+        <div className="hidden md:flex items-center ml-6 pl-6 border-l border-gray-200 flex-shrink-0 gap-1">
+          {[{code: 'en', label: 'EN'}, {code: 'fa', label: 'FA'}, {code: 'tr', label: 'TR'}].map(l => (
+            <button key={l.code} onClick={() => setLang(l.code)}
+              className="text-xs font-bold px-2.5 py-1.5 rounded-lg active:scale-95"
+              style={{
+                background: lang === l.code ? '#E07B29' : 'transparent',
+                color: lang === l.code ? 'white' : '#6B7280',
+                transition: 'background 0.2s ease, color 0.2s ease, transform 0.15s ease',
+              }}>
+              {l.label}
+            </button>
+          ))}
         </div>
 
-        {/* Mobile: lang toggle + hamburger */}
+        {/* Mobile: lang pills + hamburger */}
         <div className="md:hidden flex items-center gap-2 ml-auto">
-          <button
-            onClick={toggleLang}
-            className="text-xs font-bold px-2 py-1 rounded border border-gray-200 active:scale-95"
-            style={{
-              fontFamily: lang === 'en' ? "'Vazirmatn', sans-serif" : 'inherit',
-              transition: 'transform 0.15s ease',
-            }}>
-            {lang === 'en' ? 'فا' : 'EN'}
-          </button>
+          <div className="flex items-center gap-0.5">
+            {[{code: 'en', label: 'EN'}, {code: 'fa', label: 'FA'}, {code: 'tr', label: 'TR'}].map(l => (
+              <button key={l.code} onClick={() => setLang(l.code)}
+                className="text-xs font-bold px-2 py-1 rounded active:scale-95"
+                style={{
+                  background: lang === l.code ? '#E07B29' : 'transparent',
+                  color: lang === l.code ? 'white' : '#9CA3AF',
+                  transition: 'background 0.2s ease, color 0.2s ease, transform 0.15s ease',
+                }}>
+                {l.label}
+              </button>
+            ))}
+          </div>
           <button
             className="p-2 active:scale-95"
             style={{transition: 'transform 0.15s ease'}}
