@@ -27,11 +27,20 @@ export default function Navbar() {
   const fontStyle = isFa ? { fontFamily: "'Vazirmatn', sans-serif" } : {}
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 shadow-sm" style={fontStyle}>
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 border-b border-gray-100/80"
+      style={{
+        background: 'rgba(255,255,255,0.88)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: '0 1px 0 rgba(0,0,0,0.06)',
+        ...fontStyle,
+      }}
+    >
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center">
 
         {/* LEFT — Logo */}
-        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+        <Link href="/" className="flex items-center gap-2 flex-shrink-0 transition-opacity hover:opacity-80">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center text-xl"
                style={{background: '#E07B29'}}>📦</div>
           <div className="leading-tight">
@@ -40,43 +49,55 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* MIDDLE — Nav links, pushed to right with ml-auto */}
+        {/* MIDDLE — Nav links */}
         <div className="hidden md:flex items-center gap-5 ml-auto">
-          <Link href="/trips" className="text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+          <Link href="/trips"
+            className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
             {t.findTravelers}
           </Link>
-          <Link href="/requests" className="text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+          <Link href="/requests"
+            className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
             {t.sendPackage}
           </Link>
-          <Link href="/companion" className="text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+          <Link href="/companion"
+            className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
             {t.travelCompanion}
           </Link>
 
           {user ? (
             <>
-              <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+              <Link href="/dashboard"
+                className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
                 {t.dashboard}
               </Link>
-              <Link href="/matches" className="text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+              <Link href="/matches"
+                className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
                 {t.myMatches}
               </Link>
-              <Link href={`/profile/${user?.id}`} className="text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+              <Link href={`/profile/${user?.id}`}
+                className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
                 {t.myProfile}
               </Link>
-              <Link href="/verify" className="text-sm font-semibold px-3 py-1.5 rounded-lg transition-colors"
-                style={{background:'rgba(224,123,41,0.1)', color:'#E07B29'}}>
+              <Link href="/verify"
+                className="btn-primary text-sm font-semibold px-3 py-1.5 rounded-lg transition-colors"
+                style={{background: 'rgba(224,123,41,0.1)', color: '#E07B29'}}>
                 {t.getVerified}
               </Link>
-              <button onClick={handleSignOut}
-                className="text-sm font-semibold px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+              <button
+                onClick={handleSignOut}
+                className="text-sm font-semibold px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors active:scale-95"
+                style={{transition: 'transform 0.15s ease, background 0.15s ease'}}>
                 {t.signOut}
               </button>
             </>
           ) : (
             <>
-              <Link href="/auth" className="text-sm font-medium text-gray-600 hover:text-amber-600">{t.signIn}</Link>
+              <Link href="/auth"
+                className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+                {t.signIn}
+              </Link>
               <Link href="/auth?tab=signup"
-                className="text-sm font-semibold px-4 py-2 rounded-lg text-white transition-colors"
+                className="btn-shimmer text-sm font-semibold px-4 py-2 rounded-lg text-white"
                 style={{background: '#1A2744'}}>
                 {t.getStarted}
               </Link>
@@ -84,34 +105,46 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* RIGHT — Language toggle, pinned to far right with a divider */}
+        {/* RIGHT — Language toggle */}
         <div className="hidden md:flex items-center ml-6 pl-6 border-l border-gray-200 flex-shrink-0">
           <button
             onClick={toggleLang}
-            className="text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition-colors"
-            style={{color: '#1A2744', fontFamily: lang === 'en' ? "'Vazirmatn', sans-serif" : 'inherit'}}>
+            className="text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition-colors active:scale-95"
+            style={{
+              color: '#1A2744',
+              fontFamily: lang === 'en' ? "'Vazirmatn', sans-serif" : 'inherit',
+              transition: 'transform 0.15s ease, color 0.2s ease, border-color 0.2s ease',
+            }}>
             {lang === 'en' ? 'فارسی' : 'English'}
           </button>
         </div>
 
         {/* Mobile: lang toggle + hamburger */}
         <div className="md:hidden flex items-center gap-2 ml-auto">
-          <button onClick={toggleLang}
-            className="text-xs font-bold px-2 py-1 rounded border border-gray-200"
-            style={{fontFamily: lang === 'en' ? "'Vazirmatn', sans-serif" : 'inherit'}}>
+          <button
+            onClick={toggleLang}
+            className="text-xs font-bold px-2 py-1 rounded border border-gray-200 active:scale-95"
+            style={{
+              fontFamily: lang === 'en' ? "'Vazirmatn', sans-serif" : 'inherit',
+              transition: 'transform 0.15s ease',
+            }}>
             {lang === 'en' ? 'فا' : 'EN'}
           </button>
-          <button className="p-2" onClick={() => setMenuOpen(!menuOpen)}>
-            <div className="w-5 h-0.5 bg-gray-600 mb-1"></div>
-            <div className="w-5 h-0.5 bg-gray-600 mb-1"></div>
-            <div className="w-5 h-0.5 bg-gray-600"></div>
+          <button
+            className="p-2 active:scale-95"
+            style={{transition: 'transform 0.15s ease'}}
+            onClick={() => setMenuOpen(!menuOpen)}>
+            <div className="w-5 h-0.5 bg-gray-600 mb-1" />
+            <div className="w-5 h-0.5 bg-gray-600 mb-1" />
+            <div className="w-5 h-0.5 bg-gray-600" />
           </button>
         </div>
       </div>
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 flex flex-col gap-4" style={fontStyle}>
+        <div className="md:hidden border-t border-gray-100 px-4 py-4 flex flex-col gap-4"
+             style={{background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', ...fontStyle}}>
           <Link href="/trips" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.findTravelers}</Link>
           <Link href="/requests" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.sendPackage}</Link>
           <Link href="/companion" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.travelCompanion}</Link>
@@ -120,14 +153,18 @@ export default function Navbar() {
               <Link href="/dashboard" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.dashboard}</Link>
               <Link href="/matches" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myMatches}</Link>
               <Link href={`/profile/${user?.id}`} className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myProfile}</Link>
-              <Link href="/verify" className="text-sm font-medium" style={{color:'#E07B29'}} onClick={() => setMenuOpen(false)}>{t.getVerified}</Link>
+              <Link href="/verify" className="text-sm font-medium" style={{color: '#E07B29'}} onClick={() => setMenuOpen(false)}>{t.getVerified}</Link>
               <button onClick={handleSignOut} className="text-sm font-semibold text-left text-red-500">{t.signOut}</button>
             </>
           ) : (
             <>
               <Link href="/auth" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.signIn}</Link>
-              <Link href="/auth?tab=signup" className="text-sm font-semibold text-white px-4 py-2 rounded-lg text-center"
-                style={{background: '#1A2744'}} onClick={() => setMenuOpen(false)}>{t.getStarted}</Link>
+              <Link href="/auth?tab=signup"
+                className="text-sm font-semibold text-white px-4 py-2 rounded-lg text-center"
+                style={{background: '#1A2744'}}
+                onClick={() => setMenuOpen(false)}>
+                {t.getStarted}
+              </Link>
             </>
           )}
         </div>
