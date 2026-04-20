@@ -106,36 +106,27 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* RIGHT — Language pills */}
-        <div className="hidden md:flex items-center ml-6 pl-6 border-l border-gray-200 flex-shrink-0 gap-1">
-          {[{code: 'en', label: 'EN'}, {code: 'fa', label: 'FA'}, {code: 'tr', label: 'TR'}].map(l => (
-            <button key={l.code} onClick={() => setLang(l.code)}
-              className="text-xs font-bold px-2.5 py-1.5 rounded-lg active:scale-95"
-              style={{
-                background: lang === l.code ? '#E07B29' : 'transparent',
-                color: lang === l.code ? 'white' : '#6B7280',
-                transition: 'background 0.2s ease, color 0.2s ease, transform 0.15s ease',
-              }}>
-              {l.label}
-            </button>
-          ))}
+        {/* RIGHT — Language cycle button */}
+        <div className="hidden md:flex items-center ml-4 pl-4 border-l border-gray-200 flex-shrink-0">
+          <button onClick={toggleLang}
+            className="text-xs font-bold px-2.5 py-1.5 rounded-lg border border-gray-200 hover:border-amber-400 hover:text-amber-600 active:scale-95"
+            style={{
+              color: '#1A2744',
+              minWidth: '36px',
+              textAlign: 'center',
+              transition: 'color 0.2s ease, border-color 0.2s ease, transform 0.15s ease',
+            }}>
+            {lang === 'fa' ? 'فا' : lang.toUpperCase()}
+          </button>
         </div>
 
-        {/* Mobile: lang pills + hamburger */}
+        {/* Mobile: lang cycle button + hamburger */}
         <div className="md:hidden flex items-center gap-2 ml-auto">
-          <div className="flex items-center gap-0.5">
-            {[{code: 'en', label: 'EN'}, {code: 'fa', label: 'FA'}, {code: 'tr', label: 'TR'}].map(l => (
-              <button key={l.code} onClick={() => setLang(l.code)}
-                className="text-xs font-bold px-2 py-1 rounded active:scale-95"
-                style={{
-                  background: lang === l.code ? '#E07B29' : 'transparent',
-                  color: lang === l.code ? 'white' : '#9CA3AF',
-                  transition: 'background 0.2s ease, color 0.2s ease, transform 0.15s ease',
-                }}>
-                {l.label}
-              </button>
-            ))}
-          </div>
+          <button onClick={toggleLang}
+            className="text-xs font-bold px-2 py-1 rounded border border-gray-200 active:scale-95"
+            style={{minWidth: '32px', textAlign: 'center', transition: 'transform 0.15s ease'}}>
+            {lang === 'fa' ? 'فا' : lang.toUpperCase()}
+          </button>
           <button
             className="p-2 active:scale-95"
             style={{transition: 'transform 0.15s ease'}}
