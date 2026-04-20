@@ -166,7 +166,8 @@ function MiniMap({ airports, lang }) {
 }
 
 // ── Widget ────────────────────────────────────────────────────────────────
-const TAB_W = 40 // px — always-visible strip at the left edge
+const TAB_W = 40   // px — width of the always-visible pull tab
+const PANEL_W = 308 // px — width of the sliding panel
 
 export default function AirportStatusWidget() {
   const { lang } = useLanguage()
@@ -202,43 +203,86 @@ export default function AirportStatusWidget() {
     ? updatedAt.toLocaleTimeString(L.locale, { hour: '2-digit', minute: '2-digit' })
     : null
 
-  // Key trick: when closed, translateX = calc(-100% + TAB_W px)
-  // → only the TAB_W-wide tab strip stays visible at the left edge.
-  // When open, translateX = 0 → full panel + tab show from the left.
-  const translateX = open ? 'translateX(0)' : `translateX(calc(-100% + ${TAB_W}px))`
-
   return (
-    // Zero-width anchor fixed to viewport left edge
-    <div className="fixed left-0 z-50" style={{ top: '50%', transform: 'translateY(-50%)', width: 0 }}>
-      {/* Flex row: [panel][tab] — slides as one unit */}
-      <div
+    <>
+      {/* ── Tab: two separate fixed elements so the tab is ALWAYS at left:0 ── */}
+      {/* Tab button — permanently anchored to the left viewport edge */}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="fixed left-0 z-50"
         style={{
-          position: 'absolute',
           top: '50%',
-          left: 0,
-          transform: `translateY(-50%) ${translateX}`,
+          transform: 'translateY(-50%)',
+          width: `${TAB_W}px`,
+          ...GLASS,
+          background: open ? 'rgba(224,123,41,0.18)' : NAVY,
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderLeft: 'none',
+          borderRadius: '0 12px 12px 0',
+          color: 'white',
+          cursor: 'pointer',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '7px',
+          padding: '18px 0',
+          boxShadow: '4px 0 24px rgba(0,0,0,0.45)',
+          transition: 'background 0.25s ease',
+          outline: 'none',
+        }}
+        title="Flight Status"
+        aria-label="Toggle flight status panel"
+      >
+        <span style={{ fontSize: '14px', lineHeight: 1 }}>✈</span>
+        <span style={{
+          writingMode: 'vertical-rl',
+          transform: 'rotate(180deg)',
+          fontSize: '8px',
+          fontWeight: '800',
+          letterSpacing: '0.14em',
+          fontFamily: 'monospace',
+          color: 'rgba(255,255,255,0.65)',
+          lineHeight: 1,
+        }}>ATC</span>
+        <span
+          className="animate-pulse"
+          style={{
+            width: '5px', height: '5px',
+            borderRadius: '50%',
+            background: AMBER,
+            boxShadow: `0 0 7px ${AMBER}`,
+          }}
+        />
+      </button>
+
+      {/* Panel — slides in from left, stops beside the tab */}
+      <div
+        className="fixed left-0 z-40"
+        style={{
+          top: '50%',
+          // closed → fully off-screen (-100% = -PANEL_W px); open → sits right beside the tab
+          transform: `translateY(-50%) translateX(${open ? `${TAB_W}px` : '-100%'})`,
           transition: open
             ? 'transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1)'
             : 'transform 0.32s cubic-bezier(0.4, 0, 0.2, 1)',
-          display: 'flex',
-          alignItems: 'stretch',
+          width: `${PANEL_W}px`,
         }}
       >
 
-        {/* ── Panel ────────────────────────────────────────── */}
+        {/* Panel inner scroll container */}
         <div
           style={{
-            width: '308px',
+            width: '100%',
             maxHeight: '82vh',
             overflowY: 'auto',
             overflowX: 'hidden',
             ...GLASS,
             border: '1px solid rgba(255,255,255,0.08)',
             borderLeft: 'none',
-            borderRight: 'none',
+            borderRadius: '0 14px 14px 0',
             direction: L.dir,
             fontFamily: "'Vazirmatn', sans-serif",
-            flexShrink: 0,
           }}
         >
           {/* Header */}
@@ -416,56 +460,7 @@ export default function AirportStatusWidget() {
           </div>
         </div>
 
-        {/* ── Tab strip ────────────────────────────────────── */}
-        <button
-          onClick={() => setOpen((o) => !o)}
-          style={{
-            width: `${TAB_W}px`,
-            flexShrink: 0,
-            ...GLASS,
-            background: open ? 'rgba(224,123,41,0.18)' : NAVY,
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderLeft: 'none',
-            borderRadius: '0 12px 12px 0',
-            color: 'white',
-            cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '7px',
-            padding: '18px 0',
-            boxShadow: '4px 0 24px rgba(0,0,0,0.45)',
-            transition: 'background 0.25s ease',
-            outline: 'none',
-          }}
-          title="Flight Status"
-          aria-label="Toggle flight status panel"
-        >
-          <span style={{ fontSize: '14px', lineHeight: 1 }}>✈</span>
-          <span style={{
-            writingMode: 'vertical-rl',
-            transform: 'rotate(180deg)',
-            fontSize: '8px',
-            fontWeight: '800',
-            letterSpacing: '0.14em',
-            fontFamily: 'monospace',
-            color: 'rgba(255,255,255,0.65)',
-            lineHeight: 1,
-          }}>
-            ATC
-          </span>
-          <span
-            className="animate-pulse"
-            style={{
-              width: '5px', height: '5px',
-              borderRadius: '50%',
-              background: AMBER,
-              boxShadow: `0 0 7px ${AMBER}`,
-            }}
-          />
-        </button>
       </div>
-    </div>
+    </>
   )
 }
