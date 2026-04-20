@@ -34,6 +34,7 @@ export default function Navbar() {
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         boxShadow: '0 1px 0 rgba(0,0,0,0.06)',
+        direction: 'ltr',
         ...fontStyle,
       }}
     >
