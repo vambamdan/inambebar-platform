@@ -4,6 +4,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { useLanguage } from '@/lib/LanguageContext'
+import {
+  Package, LayoutDashboard, MessageSquare, User,
+  ShieldCheck, LogOut, Menu, X,
+} from 'lucide-react'
 
 export default function Navbar() {
   const [user, setUser] = useState(null)
@@ -21,7 +25,6 @@ export default function Navbar() {
     return () => listener.subscription.unsubscribe()
   }, [])
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -57,15 +60,17 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 flex-shrink-0 transition-opacity hover:opacity-80">
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center text-xl"
-               style={{background: '#E07B29'}}>📦</div>
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center"
+               style={{background: '#E07B29'}}>
+            <Package size={18} color="white" strokeWidth={2.5} />
+          </div>
           <div className="leading-tight">
             <div className="font-bold text-sm" style={{color: '#1A2744'}}>Inambebar</div>
             <div className="text-xs font-medium" style={{color: '#E07B29', fontFamily: "'Vazirmatn', sans-serif"}}>اینم ببر</div>
           </div>
         </Link>
 
-        {/* Public nav links — always visible on desktop */}
+        {/* Nav links */}
         <div className="hidden md:flex items-center gap-5 flex-1">
           <Link href="/trips" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors whitespace-nowrap">
             {t.findTravelers}
@@ -81,7 +86,6 @@ export default function Navbar() {
         {/* Right-side actions */}
         <div className="hidden md:flex items-center gap-3 ml-auto flex-shrink-0">
           {user ? (
-            /* Logged-in: avatar + dropdown */
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(o => !o)}
@@ -98,44 +102,38 @@ export default function Navbar() {
                 <div
                   className="absolute right-0 top-12 w-52 rounded-2xl py-1.5 z-50"
                   style={{
-                    background: 'rgba(255,255,255,0.96)',
+                    background: 'rgba(255,255,255,0.97)',
                     backdropFilter: 'blur(20px)',
                     WebkitBackdropFilter: 'blur(20px)',
                     border: '1px solid rgba(0,0,0,0.08)',
                     boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
                   }}>
-                  <Link href="/dashboard"
-                    onClick={() => setDropdownOpen(false)}
+                  <Link href="/dashboard" onClick={() => setDropdownOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <span className="text-base">📊</span> {t.dashboard}
+                    <LayoutDashboard size={15} className="text-gray-400" /> {t.dashboard}
                   </Link>
-                  <Link href="/matches"
-                    onClick={() => setDropdownOpen(false)}
+                  <Link href="/matches" onClick={() => setDropdownOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <span className="text-base">💬</span> {t.myMatches}
+                    <MessageSquare size={15} className="text-gray-400" /> {t.myMatches}
                   </Link>
-                  <Link href={`/profile/${user?.id}`}
-                    onClick={() => setDropdownOpen(false)}
+                  <Link href={`/profile/${user?.id}`} onClick={() => setDropdownOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <span className="text-base">👤</span> {t.myProfile}
+                    <User size={15} className="text-gray-400" /> {t.myProfile}
                   </Link>
-                  <Link href="/verify"
-                    onClick={() => setDropdownOpen(false)}
+                  <Link href="/verify" onClick={() => setDropdownOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold hover:bg-orange-50 transition-colors"
                     style={{color: '#E07B29'}}>
-                    <span className="text-base">✅</span> {t.getVerified}
+                    <ShieldCheck size={15} /> {t.getVerified}
                   </Link>
                   <div className="my-1 border-t border-gray-100" />
-                  <button
-                    onClick={handleSignOut}
+                  <button onClick={handleSignOut}
                     className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
-                    <span className="text-base">↩︎</span> {t.signOut}
+                    <LogOut size={15} /> {t.signOut}
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            /* Logged-out: Sign In + Get Started */
             <>
               <Link href="/auth" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
                 {t.signIn}
@@ -172,9 +170,7 @@ export default function Navbar() {
           </button>
           <button className="p-2 active:scale-95" style={{transition: 'transform 0.15s ease'}}
             onClick={() => setMenuOpen(!menuOpen)}>
-            <div className="w-5 h-0.5 bg-gray-600 mb-1" />
-            <div className="w-5 h-0.5 bg-gray-600 mb-1" />
-            <div className="w-5 h-0.5 bg-gray-600" />
+            {menuOpen ? <X size={20} className="text-gray-600" /> : <Menu size={20} className="text-gray-600" />}
           </button>
         </div>
       </div>
@@ -182,20 +178,18 @@ export default function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden border-t border-gray-100 px-4 py-4 flex flex-col gap-4"
-             style={{background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', ...fontStyle}}>
+             style={{background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', ...fontStyle}}>
           <Link href="/trips" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.findTravelers}</Link>
           <Link href="/requests" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.sendPackage}</Link>
           <Link href="/companion" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.travelCompanion}</Link>
           {user ? (
-            <>
-              <div className="border-t border-gray-100 pt-3 flex flex-col gap-3">
-                <Link href="/dashboard" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.dashboard}</Link>
-                <Link href="/matches" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myMatches}</Link>
-                <Link href={`/profile/${user?.id}`} className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myProfile}</Link>
-                <Link href="/verify" className="text-sm font-medium" style={{color: '#E07B29'}} onClick={() => setMenuOpen(false)}>{t.getVerified}</Link>
-                <button onClick={handleSignOut} className="text-sm font-semibold text-left text-red-500">{t.signOut}</button>
-              </div>
-            </>
+            <div className="border-t border-gray-100 pt-3 flex flex-col gap-3">
+              <Link href="/dashboard" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.dashboard}</Link>
+              <Link href="/matches" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myMatches}</Link>
+              <Link href={`/profile/${user?.id}`} className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myProfile}</Link>
+              <Link href="/verify" className="text-sm font-medium" style={{color: '#E07B29'}} onClick={() => setMenuOpen(false)}>{t.getVerified}</Link>
+              <button onClick={handleSignOut} className="text-sm font-semibold text-left text-red-500">{t.signOut}</button>
+            </div>
           ) : (
             <>
               <Link href="/auth" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.signIn}</Link>

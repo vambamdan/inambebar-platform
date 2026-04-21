@@ -1,5 +1,6 @@
 import './globals.css'
 import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import AirportStatusWidget from '@/components/AirportStatusWidget'
 import { LanguageProvider } from '@/lib/LanguageContext'
 
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
           <main className="min-h-screen pt-16">
             {children}
           </main>
+          <Footer />
         </LanguageProvider>
       </body>
     </html>

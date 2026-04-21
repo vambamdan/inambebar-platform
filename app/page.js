@@ -1,11 +1,18 @@
 'use client'
 import Link from 'next/link'
 import { useLanguage } from '@/lib/LanguageContext'
+import { Search, MessageSquare, CheckCircle, Plane, ShieldCheck, Gift, Lock } from 'lucide-react'
 
 const STEPS = [
-  { icon: '🔍', titleKey: 'step1Title', descKey: 'step1Desc' },
-  { icon: '💬', titleKey: 'step2Title', descKey: 'step2Desc' },
-  { icon: '✅', titleKey: 'step3Title', descKey: 'step3Desc' },
+  { Icon: Search,        titleKey: 'step1Title', descKey: 'step1Desc' },
+  { Icon: MessageSquare, titleKey: 'step2Title', descKey: 'step2Desc' },
+  { Icon: CheckCircle,   titleKey: 'step3Title', descKey: 'step3Desc' },
+]
+
+const STAT_PILLS = (t) => [
+  { Icon: Plane,        label: `4 ${t.activeRoutes}` },
+  { Icon: ShieldCheck,  label: `100% ${t.idVerified}` },
+  { Icon: Gift,         label: t.freeToJoin },
 ]
 
 export default function Home() {
@@ -17,12 +24,9 @@ export default function Home() {
 
       {/* ── HERO ─────────────────────────────────────────────── */}
       <div className="relative overflow-hidden flex items-center"
-           style={{
-             minHeight: 'calc(100vh - 4rem)',
-             background: '#0F1A35',
-           }}>
+           style={{ minHeight: 'calc(100vh - 4rem)', background: '#0F1A35' }}>
 
-        {/* Persepolis photo — anchored right, fills full height */}
+        {/* Persepolis photo */}
         <div className="absolute inset-0 pointer-events-none"
              style={{
                backgroundImage: 'url(/persepolis.jpg)',
@@ -31,13 +35,13 @@ export default function Home() {
                backgroundRepeat: 'no-repeat',
              }} />
 
-        {/* Navy gradient overlay — strong left, fade to transparent right */}
+        {/* Navy gradient overlay */}
         <div className="absolute inset-0 pointer-events-none"
              style={{
                background: 'linear-gradient(to right, #0F1A35 0%, #0F1A35 30%, rgba(15,26,53,0.85) 55%, rgba(15,26,53,0.4) 75%, rgba(15,26,53,0.15) 100%)',
              }} />
 
-        {/* Subtle amber vignette around the doorway glow area */}
+        {/* Amber doorway glow */}
         <div className="absolute inset-0 pointer-events-none"
              style={{
                background: 'radial-gradient(ellipse at 72% 55%, rgba(224,123,41,0.12) 0%, transparent 45%)',
@@ -46,7 +50,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 py-16 w-full">
           <div className="grid md:grid-cols-2 gap-12 items-center">
 
-            {/* LEFT — Copy (becomes RIGHT in RTL via grid flip) */}
+            {/* LEFT — Copy */}
             <div className={`text-center ${isFa ? 'md:text-right' : 'md:text-left'}`}>
 
               {/* Badge */}
@@ -74,7 +78,6 @@ export default function Home() {
                 </span>
               </h1>
 
-              {/* Bilingual sub-line */}
               <p className="text-xl mb-4 animate-fade-up delay-2"
                  style={{
                    color: 'rgba(255,255,255,0.55)',
@@ -88,7 +91,7 @@ export default function Home() {
                 {t.heroDesc}
               </p>
 
-              {/* CTAs — justify-start adapts automatically to RTL flex direction */}
+              {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-10 animate-fade-up delay-3">
                 <Link href="/trips"
                   className="btn-primary px-8 py-4 rounded-xl text-white font-bold text-base text-center"
@@ -97,56 +100,53 @@ export default function Home() {
                 </Link>
                 <Link href="/requests"
                   className="btn-secondary px-8 py-4 rounded-xl font-bold text-base text-center"
-                  style={{background: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.15)'}}>
+                  style={{background: 'white', color: '#1A2744', border: '1px solid rgba(255,255,255,0.9)'}}>
                   {t.postShipmentBtn}
                 </Link>
               </div>
 
               {/* Stat pills */}
               <div className="flex flex-wrap gap-3 justify-center md:justify-start animate-fade-up delay-4">
-                {[
-                  {icon: '🛫', label: `4 ${t.activeRoutes}`},
-                  {icon: '✅', label: `100% ${t.idVerified}`},
-                  {icon: '🎁', label: t.freeToJoin},
-                ].map(s => (
-                  <div key={s.label}
+                {STAT_PILLS(t).map(({ Icon, label }) => (
+                  <div key={label}
                        className="flex items-center gap-2 px-4 py-2 rounded-full"
                        style={{background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)'}}>
-                    <span className="text-sm">{s.icon}</span>
-                    <span className="text-white text-sm">{s.label}</span>
+                    <Icon size={14} color="#F5A04A" />
+                    <span className="text-white text-sm">{label}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* RIGHT — Three floating feature cards (desktop only) */}
+            {/* RIGHT — Floating cards */}
             <div className="hidden md:flex flex-col items-end gap-4 animate-fade-up delay-3" dir="ltr">
 
-              {/* ── CARD 1: Match ──────────────────────────────── */}
+              {/* Match pill */}
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold self-end"
                    style={{background: 'rgba(110,231,183,0.12)', color: '#6EE7B7', border: '1px solid rgba(110,231,183,0.25)'}}>
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                 {t.newMatchFound}
               </div>
 
+              {/* Card 1: Match */}
               <div className="animate-float w-full max-w-xs rounded-2xl p-5 shadow-2xl"
-                   style={{background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(20px)'}}>
+                   style={{background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)'}}>
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-sm font-bold text-white flex items-center gap-2">
-                    <span>🇮🇷</span>
+                    <span>IKA</span>
                     <span style={{color: 'rgba(255,255,255,0.35)'}}>→</span>
-                    <span>🇨🇦</span>
-                    <span className="ml-1">Tehran → Toronto</span>
+                    <span>YYZ</span>
+                    <span className="ml-1 text-xs font-normal" style={{color: 'rgba(255,255,255,0.6)'}}>Tehran → Toronto</span>
                   </div>
                   <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
-                        style={{background: 'rgba(110,231,183,0.15)', color: '#6EE7B7'}}>✓ Verified</span>
+                        style={{background: 'rgba(110,231,183,0.15)', color: '#6EE7B7'}}>Verified</span>
                 </div>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-lg text-white flex-shrink-0"
                        style={{background: 'linear-gradient(135deg, #E07B29, #F5A04A)'}}>A</div>
                   <div>
                     <div className="font-semibold text-white text-sm">Ali H.</div>
-                    <div className="text-xs" style={{color: 'rgba(255,255,255,0.45)'}}>⭐ 4.9 · 23 trips</div>
+                    <div className="text-xs" style={{color: 'rgba(255,255,255,0.45)'}}>4.9 · 23 trips</div>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2 mb-4">
@@ -166,28 +166,26 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* ── CARD 2: Chat preview ───────────────────────── */}
+              {/* Card 2: Chat */}
               <div className="animate-float-2 w-full max-w-xs rounded-2xl p-4 shadow-xl"
-                   style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)'}}>
+                   style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)'}}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-sm">💬</span>
+                    <MessageSquare size={13} color="white" />
                     <span className="text-white text-xs font-bold">{t.chatLabel}</span>
                   </div>
-                  <span className="text-xs px-2 py-0.5 rounded-full font-medium"
+                  <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium"
                         style={{background: 'rgba(110,231,183,0.12)', color: '#6EE7B7'}}>
-                    🔒 {t.chatEncrypted}
+                    <Lock size={10} /> {t.chatEncrypted}
                   </span>
                 </div>
                 <div className="space-y-2">
-                  {/* Sender bubble */}
                   <div className="flex justify-end">
                     <div className="text-xs px-3 py-2 rounded-xl rounded-br-sm"
                          style={{background: '#E07B29', color: 'white', maxWidth: '85%'}}>
                       {t.chatMsg1}
                     </div>
                   </div>
-                  {/* Traveler reply */}
                   <div className="flex justify-start items-end gap-1.5">
                     <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0"
                          style={{background: 'linear-gradient(135deg, #E07B29, #F5A04A)'}}>A</div>
@@ -196,7 +194,6 @@ export default function Home() {
                       {t.chatMsg2}
                     </div>
                   </div>
-                  {/* Sender follow-up */}
                   <div className="flex justify-end">
                     <div className="text-xs px-3 py-2 rounded-xl rounded-br-sm"
                          style={{background: '#E07B29', color: 'white', maxWidth: '85%'}}>
@@ -206,12 +203,14 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* ── CARD 3: Escrow / delivery confirmed ────────── */}
+              {/* Card 3: Delivery */}
               <div className="animate-float-3 w-full max-w-[280px] rounded-2xl p-4 shadow-xl"
-                   style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)'}}>
+                   style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)'}}>
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-lg flex-shrink-0"
-                       style={{background: 'rgba(110,231,183,0.15)'}}>✅</div>
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+                       style={{background: 'rgba(110,231,183,0.15)'}}>
+                    <CheckCircle size={18} color="#6EE7B7" />
+                  </div>
                   <div>
                     <div className="text-white text-xs font-bold">{t.packageDelivered}</div>
                     <div className="text-xs" style={{color: 'rgba(255,255,255,0.45)'}}>$42 → Ali H.</div>
@@ -228,7 +227,6 @@ export default function Home() {
               </div>
 
             </div>
-
           </div>
         </div>
 
@@ -247,7 +245,7 @@ export default function Home() {
             <p style={{color: '#9CA3AF'}}>{t.howItWorksDesc}</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {STEPS.map((step, i) => (
+            {STEPS.map(({ Icon, titleKey, descKey }, i) => (
               <div key={i}
                    className="bg-white rounded-2xl p-8 card-hover cursor-default"
                    style={{border: '1px solid rgba(26,39,68,0.08)', boxShadow: '0 4px 16px rgba(26,39,68,0.07)'}}>
@@ -255,9 +253,11 @@ export default function Home() {
                      style={{background: 'linear-gradient(135deg, #E07B29, #F5A04A)'}}>
                   {i + 1}
                 </div>
-                <div className="text-3xl mb-3">{step.icon}</div>
-                <h3 className="font-bold text-lg mb-2" style={{color: '#1A2744'}}>{t[step.titleKey]}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{t[step.descKey]}</p>
+                <div className="mb-3">
+                  <Icon size={28} color="#E07B29" strokeWidth={1.8} />
+                </div>
+                <h3 className="font-bold text-lg mb-2" style={{color: '#1A2744'}}>{t[titleKey]}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{t[descKey]}</p>
               </div>
             ))}
           </div>
@@ -276,15 +276,6 @@ export default function Home() {
             style={{background: '#E07B29', boxShadow: '0 8px 30px rgba(224,123,41,0.35)'}}>
             {t.createAccount}
           </Link>
-        </div>
-      </div>
-
-      {/* ── FOOTER ───────────────────────────────────────────── */}
-      <div className="py-6 text-center" style={{background: '#1A2744'}}>
-        <div className="flex justify-center gap-6 text-xs" style={{color: 'rgba(255,255,255,0.35)'}}>
-          <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
-          <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-          <span>© 2026 Inambebar</span>
         </div>
       </div>
 
