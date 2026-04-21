@@ -63,12 +63,17 @@ export default function TripDetail() {
       .single()
 
     if (!error && match) {
-      // Send first message
       await supabase.from('messages').insert({
         match_id: match.id,
         sender_id: user.id,
         content: message
       })
+      // Notify the traveler
+      fetch('/api/notify/match', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ matchId: match.id, recipientId: trip.traveler_id }),
+      }).catch(() => {})
       router.push(`/matches/${match.id}`)
     }
     setContacting(false)

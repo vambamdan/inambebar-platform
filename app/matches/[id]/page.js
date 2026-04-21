@@ -78,11 +78,18 @@ export default function MatchChat() {
     e.preventDefault()
     if (!newMessage.trim() || !user) return
     setSending(true)
+    const content = newMessage.trim()
     await supabase.from('messages').insert({
       match_id: id,
       sender_id: user.id,
-      content: newMessage.trim()
+      content,
     })
+    // Notify the other party (fire-and-forget)
+    fetch('/api/notify/message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ matchId: id, senderId: user.id, preview: content }),
+    }).catch(() => {})
     setNewMessage('')
     setSending(false)
   }
@@ -90,6 +97,12 @@ export default function MatchChat() {
   async function updateStatus(status) {
     await supabase.from('matches').update({ status }).eq('id', id)
     setMatch(m => ({...m, status}))
+    // Notify both parties of the status change
+    fetch('/api/notify/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ matchId: id, status }),
+    }).catch(() => {})
   }
 
   if (loading) return <div className="flex items-center justify-center min-h-screen text-gray-400">Loading conversation...</div>

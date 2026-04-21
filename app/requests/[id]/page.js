@@ -71,6 +71,12 @@ export default function RequestDetail() {
         sender_id: user.id,
         content: message
       })
+      // Notify the sender (request owner)
+      fetch('/api/notify/match', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ matchId: match.id, recipientId: request.sender_id }),
+      }).catch(() => {})
       router.push(`/matches/${match.id}`)
     }
     setContacting(false)
