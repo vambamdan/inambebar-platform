@@ -19,14 +19,29 @@ export default function Home() {
       <div className="relative overflow-hidden flex items-center"
            style={{
              minHeight: 'calc(100vh - 4rem)',
-             background: 'linear-gradient(135deg, #0F1A35 0%, #1A2744 50%, #1D2B4F 100%)',
+             background: '#0F1A35',
            }}>
 
-        {/* Ambient glow orbs */}
-        <div className="absolute top-16 left-1/4 w-96 h-96 rounded-full pointer-events-none"
-             style={{background: 'radial-gradient(circle, rgba(224,123,41,0.18) 0%, transparent 70%)', filter: 'blur(60px)'}} />
-        <div className="absolute bottom-0 right-1/3 w-64 h-64 rounded-full pointer-events-none"
-             style={{background: 'radial-gradient(circle, rgba(245,160,74,0.1) 0%, transparent 70%)', filter: 'blur(40px)'}} />
+        {/* Persepolis photo — anchored right, fills full height */}
+        <div className="absolute inset-0 pointer-events-none"
+             style={{
+               backgroundImage: 'url(/persepolis.jpg)',
+               backgroundSize: 'cover',
+               backgroundPosition: 'center right',
+               backgroundRepeat: 'no-repeat',
+             }} />
+
+        {/* Navy gradient overlay — strong left, fade to transparent right */}
+        <div className="absolute inset-0 pointer-events-none"
+             style={{
+               background: 'linear-gradient(to right, #0F1A35 0%, #0F1A35 30%, rgba(15,26,53,0.85) 55%, rgba(15,26,53,0.4) 75%, rgba(15,26,53,0.15) 100%)',
+             }} />
+
+        {/* Subtle amber vignette around the doorway glow area */}
+        <div className="absolute inset-0 pointer-events-none"
+             style={{
+               background: 'radial-gradient(ellipse at 72% 55%, rgba(224,123,41,0.12) 0%, transparent 45%)',
+             }} />
 
         <div className="max-w-6xl mx-auto px-4 py-16 w-full">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -215,6 +230,12 @@ export default function Home() {
             </div>
 
           </div>
+        </div>
+
+        {/* Photo credit */}
+        <div className="absolute bottom-3 right-4 pointer-events-none"
+             style={{color: 'rgba(255,255,255,0.28)', fontSize: '10px', letterSpacing: '0.03em'}}>
+          Photo: Hasan Almasi / Unsplash
         </div>
       </div>
 
