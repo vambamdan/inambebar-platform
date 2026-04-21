@@ -219,7 +219,7 @@ export default function Home() {
       </div>
 
       {/* ── HOW IT WORKS ─────────────────────────────────────── */}
-      <div className="py-24" style={{background: '#FFF5E6'}}>
+      <div className="py-24" style={{background: '#F8FAFC'}}>
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-black mb-3" style={{color: '#1A2744'}}>{t.howItWorks}</h2>
@@ -229,7 +229,7 @@ export default function Home() {
             {STEPS.map((step, i) => (
               <div key={i}
                    className="bg-white rounded-2xl p-8 card-hover cursor-default"
-                   style={{border: '1px solid rgba(26,39,68,0.06)', boxShadow: '0 2px 8px rgba(26,39,68,0.04)'}}>
+                   style={{border: '1px solid rgba(26,39,68,0.08)', boxShadow: '0 4px 16px rgba(26,39,68,0.07)'}}>
                 <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-white text-lg mb-5"
                      style={{background: 'linear-gradient(135deg, #E07B29, #F5A04A)'}}>
                   {i + 1}
@@ -244,15 +244,15 @@ export default function Home() {
       </div>
 
       {/* ── CTA ──────────────────────────────────────────────── */}
-      <div className="py-20 text-center relative overflow-hidden" style={{background: '#E07B29'}}>
+      <div className="py-20 text-center relative overflow-hidden" style={{background: '#1A2744'}}>
         <div className="absolute inset-0 pointer-events-none"
-             style={{backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.05) 0%, transparent 50%)'}} />
+             style={{backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(224,123,41,0.1) 0%, transparent 55%), radial-gradient(circle at 80% 50%, rgba(224,123,41,0.06) 0%, transparent 55%)'}} />
         <div className="relative">
           <h2 className="text-3xl font-black text-white mb-3">{t.readyToStart}</h2>
-          <p className="mb-8" style={{color: 'rgba(255,255,255,0.75)'}}>{t.joinFree}</p>
+          <p className="mb-8" style={{color: 'rgba(255,255,255,0.55)'}}>{t.joinFree}</p>
           <Link href="/auth?tab=signup"
-            className="btn-secondary inline-block px-10 py-4 rounded-xl font-bold text-base bg-white"
-            style={{color: '#E07B29', boxShadow: '0 8px 30px rgba(0,0,0,0.15)'}}>
+            className="btn-primary inline-block px-10 py-4 rounded-xl font-bold text-base text-white"
+            style={{background: '#E07B29', boxShadow: '0 8px 30px rgba(224,123,41,0.35)'}}>
             {t.createAccount}
           </Link>
         </div>

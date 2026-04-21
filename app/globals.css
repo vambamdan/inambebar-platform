@@ -5,13 +5,13 @@
   --amber-light: #F5A04A;
   --amber-glow: rgba(224, 123, 41, 0.4);
   --navy: #1A2744;
+  --navy-dark: #0F1A35;
   --navy-mid: #253560;
-  --cream: #FFF5E6;
-  --off-white: #FAFAF7;
+  --surface: #F8FAFC;
 }
 
 body {
-  background: var(--off-white);
+  background: #ffffff;
   color: var(--navy);
   font-family: 'Inter', system-ui, sans-serif;
 }
