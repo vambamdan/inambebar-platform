@@ -302,15 +302,13 @@ function RouteCard({ route, L, isFa }) {
   )
 }
 
-// ── Scrollable panel content (reused for desktop + mobile) ────────────────
+// ── Panel content — parent owns the scroll ───────────────────────────────
 function PanelContent({ routes, L, isFa }) {
   return (
     <div style={{
       ...GLASS,
       direction: L.dir,
       fontFamily: "'Vazirmatn', sans-serif",
-      height: '100%',
-      overflowY: 'auto',
     }}>
       {/* Sticky header */}
       <div style={{
@@ -423,7 +421,8 @@ export default function AirportStatusWidget() {
             width: `${PANEL_W}px`,
             maxHeight: '82vh',
             borderRadius: '0 14px 14px 0',
-            overflow: 'hidden',
+            overflowY: 'auto',
+            overflowX: 'hidden',
             boxShadow: '8px 0 40px rgba(0,0,0,0.5)',
             border: '1px solid rgba(255,255,255,0.08)',
             borderLeft: 'none',
@@ -477,7 +476,7 @@ export default function AirportStatusWidget() {
         />
       )}
 
-      {/* Bottom sheet */}
+      {/* Bottom sheet — flex column keeps drag handle out of scroll flow */}
       <div
         className="fixed left-0 right-0 z-50"
         style={{
@@ -492,25 +491,29 @@ export default function AirportStatusWidget() {
           border: '1px solid rgba(255,255,255,0.1)',
           borderBottom: 'none',
           boxShadow: '0 -8px 40px rgba(0,0,0,0.5)',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        {/* Drag handle + close hint */}
+        {/* Drag handle — fixed height, never scrolls */}
         <div
           onClick={() => setOpen(false)}
           style={{
             ...GLASS,
             background: 'rgba(10,18,40,0.99)',
-            paddingTop: '12px', paddingBottom: '6px',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-            cursor: 'pointer',
-            position: 'sticky', top: 0, zIndex: 3,
+            paddingTop: '12px', paddingBottom: '8px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', flexShrink: 0,
             borderBottom: '1px solid rgba(255,255,255,0.06)',
           }}
         >
           <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: 'rgba(255,255,255,0.18)' }} />
         </div>
 
-        <PanelContent routes={routes} L={L} isFa={isFa} />
+        {/* Scrollable content */}
+        <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+          <PanelContent routes={routes} L={L} isFa={isFa} />
+        </div>
       </div>
     </>
   )
