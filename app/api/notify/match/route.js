@@ -1,11 +1,11 @@
 import { Resend } from 'resend'
-import supabaseAdmin from '@/lib/supabaseAdmin'
+import getSupabaseAdmin from '@/lib/supabaseAdmin'
 import { newMatchEmail } from '@/lib/emailTemplates'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(request) {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY)
+    const supabaseAdmin = getSupabaseAdmin()
     const { matchId, recipientId } = await request.json()
     if (!matchId || !recipientId) return Response.json({ error: 'Missing fields' }, { status: 400 })
 

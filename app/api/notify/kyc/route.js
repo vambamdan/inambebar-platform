@@ -1,12 +1,13 @@
 import { Resend } from 'resend'
-import supabaseAdmin from '@/lib/supabaseAdmin'
+import getSupabaseAdmin from '@/lib/supabaseAdmin'
 import { kycSubmittedAdminEmail, kycApprovedEmail, kycRejectedEmail } from '@/lib/emailTemplates'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
 const ADMIN_EMAIL = 'amirdaniyalm@gmail.com'
 
 export async function POST(request) {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY)
+    const supabaseAdmin = getSupabaseAdmin()
     const { type, userId } = await request.json()
     if (!type || !userId) return Response.json({ error: 'Missing fields' }, { status: 400 })
 
