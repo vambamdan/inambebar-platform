@@ -68,6 +68,11 @@ export default function AdminPanel() {
       is_verified: true,
       verification_level: 'full'
     }).eq('id', userId)
+    fetch('/api/notify/kyc', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'approved', userId }),
+    }).catch(() => {})
     setPendingUsers(prev => prev.filter(u => u.id !== userId))
     setAllUsers(prev => prev.map(u => u.id === userId ? {...u, is_verified: true, verification_level: 'full'} : u))
   }
@@ -76,6 +81,11 @@ export default function AdminPanel() {
     await supabase.from('profiles').update({
       verification_level: 'none'
     }).eq('id', userId)
+    fetch('/api/notify/kyc', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'rejected', userId }),
+    }).catch(() => {})
     setPendingUsers(prev => prev.filter(u => u.id !== userId))
   }
 

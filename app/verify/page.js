@@ -59,6 +59,13 @@ export default function VerifyPage() {
         verification_level: 'id'
       }).eq('id', user.id)
 
+      // Alert admin
+      fetch('/api/notify/kyc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'submitted', userId: user.id }),
+      }).catch(() => {})
+
       setStep('submitted')
     } catch (err) {
       setError('Upload failed. Please try again. ' + err.message)
