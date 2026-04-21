@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link'
 import { Package, Instagram, Linkedin, Phone } from 'lucide-react'
 
