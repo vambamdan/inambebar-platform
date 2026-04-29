@@ -6,21 +6,31 @@ import { LanguageProvider } from '@/lib/LanguageContext'
 
 export const metadata = {
   metadataBase: new URL('https://www.inambebar.com'),
-  title: 'Inambebar | اینم ببر',
-  description: 'Connect with trusted Iranian travelers to send packages home. Fast, affordable, community-driven.',
+  title: 'Inambebar | اینم ببر — Send Packages Home with Trusted Travelers',
+  description: 'Connect with trusted Iranian travelers to send packages home. Fast, affordable, community-driven peer-to-peer delivery for the Iranian diaspora.',
+  keywords: ['Iranian diaspora', 'send packages Iran', 'peer-to-peer delivery', 'trusted travelers', 'اینم ببر', 'package delivery', 'luggage sharing'],
   openGraph: {
-    title: 'Inambebar | اینم ببر',
-    description: 'Send anything home with the people you trust. Peer-to-peer package delivery for the Iranian diaspora.',
+    title: 'Inambebar — Send Anything Home 🧳',
+    description: 'Send anything home with the people you trust. Free to join. Trusted travelers, real community.',
     url: 'https://www.inambebar.com',
     siteName: 'Inambebar',
     locale: 'en_US',
+    alternateLocale: 'fa_IR',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Inambebar | اینم ببر',
-    description: 'Send anything home with the people you trust.',
+    title: 'Inambebar — Send Anything Home 🧳',
+    description: 'Peer-to-peer package delivery for the Iranian diaspora. Free, trusted, community-driven.',
+    creator: '@inambebar',
   },
+  themeColor: '#1A2744',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Inambebar',
+  },
+  formatDetection: { telephone: false },
 }
 
 export default function RootLayout({ children }) {
