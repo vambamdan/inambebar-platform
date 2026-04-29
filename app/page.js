@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useLanguage } from '@/lib/LanguageContext'
 import { Search, MessageSquare, CheckCircle, Plane, ShieldCheck, Gift, Lock } from 'lucide-react'
 
@@ -26,14 +27,16 @@ export default function Home() {
       <div className="relative overflow-hidden flex items-center"
            style={{ minHeight: 'calc(100vh - 4rem)', background: '#0F1A35' }}>
 
-        {/* Persepolis photo */}
-        <div className="absolute inset-0 pointer-events-none"
-             style={{
-               backgroundImage: 'url(/persepolis.jpg)',
-               backgroundSize: 'cover',
-               backgroundPosition: 'center right',
-               backgroundRepeat: 'no-repeat',
-             }} />
+        {/* Persepolis photo — next/image for automatic WebP + correct sizing */}
+        <Image
+          src="/persepolis.jpg"
+          alt="Persepolis, Iran"
+          fill
+          priority
+          quality={80}
+          sizes="100vw"
+          style={{ objectFit: 'cover', objectPosition: 'center right', pointerEvents: 'none' }}
+        />
 
         {/* Navy gradient overlay */}
         <div className="absolute inset-0 pointer-events-none"
