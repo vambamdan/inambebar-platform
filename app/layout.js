@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import AirportStatusWidget from '@/components/AirportStatusWidget'
 import { LanguageProvider } from '@/lib/LanguageContext'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata = {
   metadataBase: new URL('https://www.inambebar.com'),
@@ -50,6 +51,7 @@ export default function RootLayout({ children }) {
           </main>
           <Footer />
         </LanguageProvider>
+        <SpeedInsights />
       </body>
     </html>
   )
