@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Share Image Previews — Inambebar</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@700;800&family=Vazirmatn:wght@400&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #1a1a1a; padding: 40px; font-family: sans-serif; color: white; }
+    h2 { font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #666; margin-bottom: 16px; }
+    .section { margin-bottom: 60px; }
+
+    /* OG Card (1200×630) shown at 58% */
+    .og-wrap { transform: scale(0.58); transform-origin: top left; width: 1200px; height: 630px; margin-bottom: -268px; }
+    .og {
+      width: 1200px; height: 630px; background: #1A2744;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 20px; position: relative;
+    }
+    .mark { display: flex; align-items: center; }
+    .wing-l { width:52px; height:80px; background:linear-gradient(155deg,#E07B29 20%,rgba(224,123,41,.25) 100%); border-radius:60% 10% 10% 60%; margin-right:-14px; }
+    .wing-r { width:52px; height:80px; background:linear-gradient(205deg,#E07B29 20%,rgba(224,123,41,.25) 100%); border-radius:10% 60% 60% 10%; margin-left:-14px; }
+    .sc { display:flex; flex-direction:column; align-items:center; }
+    .sc-handle { width:38px; height:13px; border:4px solid white; border-bottom:none; border-radius:8px 8px 0 0; }
+    .sc-body { width:96px; height:78px; background:white; border-radius:14px; display:flex; align-items:center; justify-content:center; }
+    .sc-stripe { width:100%; height:5px; background:rgba(224,123,41,0.5); }
+    .sc-wheels { display:flex; gap:44px; margin-top:7px; }
+    .wheel { width:13px; height:13px; border-radius:50%; background:white; }
+    .wordmark { display:flex; flex-direction:column; align-items:center; gap:8px; }
+    .name { font-family:'DM Sans',sans-serif; font-weight:800; font-size:86px; color:white; letter-spacing:-3.5px; line-height:1; }
+    .persian { font-family:'Vazirmatn',sans-serif; font-size:30px; color:#E07B29; }
+    .tagline { font-size:26px; color:rgba(255,255,255,0.5); }
+    .badges { display:flex; gap:14px; }
+    .badge { padding:9px 22px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:100px; font-size:18px; color:rgba(255,255,255,.65); }
+    .domain { position:absolute; bottom:22px; left:0; right:0; font-size:18px; color:rgba(255,255,255,.25); letter-spacing:3px; text-align:center; }
+    .bar { position:absolute; bottom:0; left:0; right:0; height:8px; background:#E07B29; }
+
+    /* Platform mockups */
+    .platforms { display:flex; gap:24px; flex-wrap:wrap; margin-top:16px; }
+
+    /* WhatsApp */
+    .wa { background:#0B141A; border-radius:12px; padding:20px; width:340px; }
+    .wa-bubble { background:#1F2C34; border-radius:8px; overflow:hidden; }
+    .wa-thumb { height:180px; background:#1A2744; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; position:relative; }
+    .wa-meta { padding:10px 12px; background:#1F2C34; border-top:1px solid rgba(255,255,255,.06); }
+    .wa-title { font-size:13px; font-weight:600; color:#E9EDEF; }
+    .wa-desc { font-size:11px; color:#8696A0; margin-top:3px; }
+    .wa-url { font-size:10px; color:#8696A0; margin-top:2px; text-transform:uppercase; letter-spacing:1px; }
+
+    /* Twitter/X */
+    .tw { background:#000; border-radius:16px; padding:0; width:520px; overflow:hidden; border:1px solid #2F3336; }
+    .tw-img { height:270px; background:#1A2744; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px; position:relative; }
+    .tw-meta { padding:12px 14px; background:#000; border-top:1px solid #2F3336; }
+    .tw-domain { font-size:13px; color:#71767B; }
+    .tw-title { font-size:15px; font-weight:600; color:#E7E9EA; margin-top:2px; }
+    .tw-desc { font-size:14px; color:#71767B; margin-top:2px; }
+
+    /* iMessage */
+    .im { background:#1C1C1E; border-radius:16px; padding:20px; width:320px; }
+    .im-bubble { background:#2C2C2E; border-radius:12px; overflow:hidden; }
+    .im-img { height:165px; background:#1A2744; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; position:relative; }
+    .im-meta { padding:10px 12px; }
+    .im-domain { font-size:10px; color:#98989D; text-transform:uppercase; letter-spacing:1px; }
+    .im-title { font-size:13px; font-weight:600; color:white; margin-top:2px; }
+
+    /* Mini mark used in mockups */
+    .mini-mark { display:flex; align-items:center; }
+    .mwl { width:24px;height:36px;background:linear-gradient(155deg,#E07B29 20%,rgba(224,123,41,.25) 100%);border-radius:60% 10% 10% 60%;margin-right:-6px; }
+    .mwr { width:24px;height:36px;background:linear-gradient(205deg,#E07B29 20%,rgba(224,123,41,.25) 100%);border-radius:10% 60% 60% 10%;margin-left:-6px; }
+    .msc { display:flex;flex-direction:column;align-items:center; }
+    .msc-b { width:44px;height:36px;background:white;border-radius:6px; }
+    .amber-bar-mini { position:absolute;bottom:0;left:0;right:0;height:4px;background:#E07B29; }
+
+    /* iOS icon */
+    .icon-row { display:flex; gap:20px; align-items:flex-end; }
+    .ios-icon { background:#1A2744; border-radius:22%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
+  </style>
+</head>
+<body>
+
+<div class="section">
+  <h2>OG / Facebook / WhatsApp / Telegram — 1200×630</h2>
+  <div class="og-wrap">
+    <div class="og">
+      <div class="mark">
+        <div class="wing-l"></div>
+        <div class="sc">
+          <div class="sc-handle"></div>
+          <div class="sc-body"><div class="sc-stripe"></div></div>
+          <div class="sc-wheels"><div class="wheel"></div><div class="wheel"></div></div>
+        </div>
+        <div class="wing-r"></div>
+      </div>
+      <div class="wordmark">
+        <div class="name">Inambebar</div>
+        <div class="persian">اینم ببر</div>
+      </div>
+      <div class="tagline">Send anything home — with the people you trust</div>
+      <div class="badges">
+        <div class="badge">✈  Iranian diaspora</div>
+        <div class="badge">🔒  Trusted travelers</div>
+        <div class="badge">🎁  Free to join</div>
+      </div>
+      <div class="domain">inambebar.com</div>
+      <div class="bar"></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Platform Previews</h2>
+  <div class="platforms">
+
+    <!-- WhatsApp -->
+    <div>
+      <div style="font-size:11px;color:#555;margin-bottom:8px;">WhatsApp</div>
+      <div class="wa">
+        <div class="wa-bubble">
+          <div class="wa-thumb">
+            <div class="mini-mark">
+              <div class="mwl"></div>
+              <div class="msc"><div class="msc-b"></div></div>
+              <div class="mwr"></div>
+            </div>
+            <div style="font-size:18px;font-weight:800;color:white;font-family:'DM Sans',sans-serif;">Inambebar</div>
+            <div class="amber-bar-mini"></div>
+          </div>
+          <div class="wa-meta">
+            <div class="wa-title">Inambebar — Send Anything Home 🧳</div>
+            <div class="wa-desc">Peer-to-peer package delivery for the Iranian diaspora.</div>
+            <div class="wa-url">inambebar.com</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Twitter/X -->
+    <div>
+      <div style="font-size:11px;color:#555;margin-bottom:8px;">X (Twitter)</div>
+      <div class="tw">
+        <div class="tw-img">
+          <div class="mini-mark">
+            <div class="mwl"></div>
+            <div class="msc"><div class="msc-b"></div></div>
+            <div class="mwr"></div>
+          </div>
+          <div style="font-size:22px;font-weight:800;color:white;font-family:'DM Sans',sans-serif;">Inambebar</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4)">Send anything home — with the people you trust</div>
+          <div class="amber-bar-mini"></div>
+        </div>
+        <div class="tw-meta">
+          <div class="tw-domain">inambebar.com</div>
+          <div class="tw-title">Inambebar — Send Anything Home 🧳</div>
+          <div class="tw-desc">Free to join · Iranian diaspora community</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- iMessage -->
+    <div>
+      <div style="font-size:11px;color:#555;margin-bottom:8px;">iMessage / iOS</div>
+      <div class="im">
+        <div class="im-bubble">
+          <div class="im-img">
+            <div class="mini-mark">
+              <div class="mwl"></div>
+              <div class="msc"><div class="msc-b"></div></div>
+              <div class="mwr"></div>
+            </div>
+            <div style="font-size:18px;font-weight:800;color:white;font-family:'DM Sans',sans-serif;">Inambebar</div>
+            <div class="amber-bar-mini"></div>
+          </div>
+          <div class="im-meta">
+            <div class="im-domain">inambebar.com</div>
+            <div class="im-title">Inambebar — Send Anything Home 🧳</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- iOS Home Screen Icon -->
+    <div>
+      <div style="font-size:11px;color:#555;margin-bottom:8px;">iOS App Icon</div>
+      <div class="icon-row">
+        <div class="ios-icon" style="width:60px;height:60px;">
+          <div class="mini-mark" style="transform:scale(0.7)">
+            <div class="mwl"></div>
+            <div class="msc"><div class="msc-b"></div></div>
+            <div class="mwr"></div>
+          </div>
+        </div>
+        <div class="ios-icon" style="width:80px;height:80px;">
+          <div class="mini-mark" style="transform:scale(0.9)">
+            <div class="mwl"></div>
+            <div class="msc"><div class="msc-b"></div></div>
+            <div class="mwr"></div>
+          </div>
+        </div>
+        <div class="ios-icon" style="width:120px;height:120px;">
+          <div class="mini-mark" style="transform:scale(1.3)">
+            <div class="mwl"></div>
+            <div class="msc"><div class="msc-b"></div></div>
+            <div class="mwr"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="font-size:11px;color:#444;margin-top:20px;">Delete og-preview.html before going live.</div>
+</body>
+</html>

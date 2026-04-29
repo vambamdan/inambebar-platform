@@ -87,11 +87,13 @@ export default function OgImage() {
           ))}
         </div>
 
-        {/* Domain + amber bar row at bottom */}
+        {/* Domain — centered at bottom */}
         <div style={{
           display: 'flex',
+          justifyContent: 'center',
           position: 'absolute' as const,
           bottom: 22,
+          left: 0, right: 0,
           fontSize: 18, color: 'rgba(255,255,255,0.25)',
           letterSpacing: 3,
         }}>
