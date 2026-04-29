@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
-import { Package, Instagram, Linkedin, Phone } from 'lucide-react'
+import { Instagram, Linkedin, Phone } from 'lucide-react'
+import { LogoStacked } from '@/components/Logo'
 
 const NAV = [
   {
@@ -64,15 +65,8 @@ export default function Footer() {
 
           {/* Brand column */}
           <div className="md:col-span-1">
-            <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-                   style={{background: '#E07B29'}}>
-                <Package size={18} color="white" strokeWidth={2.5} />
-              </div>
-              <div className="leading-tight">
-                <div className="font-bold text-sm text-white">Inambebar</div>
-                <div className="text-xs font-medium" style={{color: '#E07B29', fontFamily: "'Vazirmatn', sans-serif"}}>اینم ببر</div>
-              </div>
+            <Link href="/" className="inline-block mb-4 transition-opacity hover:opacity-80">
+              <LogoStacked dark={true} markSize={64} nameSize={18} />
             </Link>
             <p className="text-sm leading-relaxed mb-5" style={{color: 'rgba(255,255,255,0.45)'}}>
               Connecting trusted travelers with people who need to send packages home — safely and affordably.

@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { useLanguage } from '@/lib/LanguageContext'
 import {
-  Package, LayoutDashboard, MessageSquare, User,
+  LayoutDashboard, MessageSquare, User,
   ShieldCheck, LogOut, Menu, X,
 } from 'lucide-react'
+import { LogoHorizontal } from '@/components/Logo'
 
 export default function Navbar() {
   const [user, setUser] = useState(null)
@@ -59,15 +60,8 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center gap-6">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 flex-shrink-0 transition-opacity hover:opacity-80">
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center"
-               style={{background: '#E07B29'}}>
-            <Package size={18} color="white" strokeWidth={2.5} />
-          </div>
-          <div className="leading-tight">
-            <div className="font-bold text-sm" style={{color: '#1A2744'}}>Inambebar</div>
-            <div className="text-xs font-medium" style={{color: '#E07B29', fontFamily: "'Vazirmatn', sans-serif"}}>اینم ببر</div>
-          </div>
+        <Link href="/" className="flex-shrink-0 transition-opacity hover:opacity-80">
+          <LogoHorizontal dark={false} markSize={36} />
         </Link>
 
         {/* Nav links */}
