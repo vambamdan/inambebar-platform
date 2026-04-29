@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
 const STEPS = ['intro', 'id_upload', 'selfie_upload', 'submitted']
@@ -16,6 +17,7 @@ export default function VerifyPage() {
   const [selfiePreview, setSelfiePreview] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [consentGiven, setConsentGiven] = useState(false)
   const idRef = useRef()
   const selfieRef = useRef()
 
@@ -220,9 +222,22 @@ export default function VerifyPage() {
             )}
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-4 text-xs text-gray-400 leading-relaxed">
-            By submitting these documents you confirm they are genuine, belong to you, and you consent to Inambebar storing them for identity verification and legal compliance purposes.
-          </div>
+          {/* GDPR-compliant explicit consent checkbox */}
+          <label className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={consentGiven}
+              onChange={e => setConsentGiven(e.target.checked)}
+              className="mt-0.5 h-4 w-4 flex-shrink-0 accent-amber-500"
+            />
+            <span className="text-xs text-gray-500 leading-relaxed">
+              I confirm that the documents I am submitting are genuine and belong to me. I have read and understood the{' '}
+              <Link href="/privacy" target="_blank" className="underline font-medium" style={{color:'#E07B29'}}>
+                Privacy Policy
+              </Link>
+              {' '}and understand that my ID and selfie will be stored securely by Inambebar for identity verification and legal compliance purposes for up to 3 years after account deletion, and may be disclosed to law enforcement upon a valid legal request.
+            </span>
+          </label>
 
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
@@ -231,7 +246,7 @@ export default function VerifyPage() {
               className="flex-1 py-3 rounded-xl font-bold border border-gray-200 text-gray-500">
               Back
             </button>
-            <button onClick={handleSubmit} disabled={submitting || !selfieFile}
+            <button onClick={handleSubmit} disabled={submitting || !selfieFile || !consentGiven}
               className="flex-1 py-3 rounded-xl text-white font-bold disabled:opacity-50" style={{background:'#E07B29'}}>
               {submitting ? 'Submitting...' : 'Submit for Review →'}
             </button>

@@ -202,7 +202,8 @@ export default function Terms() {
 
         <section>
           <h2 className="text-lg font-bold mb-3" style={{color:'#1A2744'}}>13. Governing Law</h2>
-          <p>These Terms are governed by the laws of Ontario, Canada. Any disputes arising from use of Inambebar that cannot be resolved through our internal dispute process shall be subject to the exclusive jurisdiction of the courts of Ontario, Canada.</p>
+          <p className="mb-3">These Terms are governed by the laws of the Federal Republic of Germany, excluding its conflict-of-law provisions. Any disputes arising from use of Inambebar that cannot be resolved through our internal dispute process shall be subject to the exclusive jurisdiction of the competent courts in Germany.</p>
+          <p className="text-sm text-gray-400">If you are a consumer habitually resident in another EU member state, you retain the protection of the mandatory consumer protection provisions of your country of residence, and may bring proceedings in the courts of that country.</p>
         </section>
 
         <section>
