@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Plane, Package } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 export default function Dashboard() {
@@ -69,13 +70,13 @@ export default function Dashboard() {
       {/* Action cards */}
       <div className="grid md:grid-cols-2 gap-4 mb-10">
         <Link href="/trips/new" className="group block bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-0.5">
-          <div className="text-3xl mb-3">✈️</div>
+          <div className="mb-3"><Plane size={28} color="#1A2744" strokeWidth={1.6} /></div>
           <h3 className="font-bold text-base mb-1" style={{color: '#1A2744'}}>Post a Trip</h3>
           <p className="text-gray-400 text-sm">Flying soon? Offer your spare luggage space and earn money.</p>
           <div className="mt-4 text-sm font-bold" style={{color: '#E07B29'}}>Post now →</div>
         </Link>
         <Link href="/requests/new" className="group block bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-0.5">
-          <div className="text-3xl mb-3">📦</div>
+          <div className="mb-3"><Package size={28} color="#1A2744" strokeWidth={1.6} /></div>
           <h3 className="font-bold text-base mb-1" style={{color: '#1A2744'}}>Send a Package</h3>
           <p className="text-gray-400 text-sm">Need to send something? Post a request and find a traveler.</p>
           <div className="mt-4 text-sm font-bold" style={{color: '#E07B29'}}>Post now →</div>

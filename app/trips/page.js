@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Star } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useLanguage } from '@/lib/LanguageContext'
 import { CATEGORIES } from '@/lib/translations'
@@ -108,8 +109,9 @@ export default function TripsPage() {
                           style={{background:'rgba(46,189,122,0.1)', color:'#2EBD7A'}}>✓ {t.verified}</span>
                       )}
                     </div>
-                    <div className="text-xs text-gray-400 mt-0.5">
-                      ⭐ {trip.profiles?.rating_avg?.toFixed(1) || t.newUser} · {trip.profiles?.rating_count || 0} {t.reviews}
+                    <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
+                      <Star size={11} color="#F5A04A" fill="#F5A04A" />
+                      {trip.profiles?.rating_avg?.toFixed(1) || t.newUser} · {trip.profiles?.rating_count || 0} {t.reviews}
                     </div>
                   </div>
                 </div>

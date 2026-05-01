@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { Scale, Calendar } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useLanguage } from '@/lib/LanguageContext'
 import { CATEGORIES } from '@/lib/translations'
@@ -187,13 +188,14 @@ function RequestCard({ req, t, isFa }) {
               {categoryInfo.icon} {categoryLabel}
             </span>
           )}
-          <span className="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 font-medium">
-            ⚖️ {req.weight_kg} kg
+          <span className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 font-medium">
+            <Scale size={11} /> {req.weight_kg} kg
           </span>
           {req.needed_by_date && (
-            <span className="text-xs px-2.5 py-1 rounded-full font-medium"
+            <span className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium"
               style={{background:'rgba(26,39,68,0.06)', color:'#1A2744'}}>
-              📅 {new Date(req.needed_by_date).toLocaleDateString('en-GB', {day:'numeric',month:'short'})}
+              <Calendar size={11} />
+              {new Date(req.needed_by_date).toLocaleDateString('en-GB', {day:'numeric',month:'short'})}
             </span>
           )}
         </div>

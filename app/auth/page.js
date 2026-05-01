@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
+import { LogoStacked } from '@/components/Logo'
 
 function AuthForm() {
   const router = useRouter()
@@ -23,13 +24,8 @@ function AuthForm() {
   return (
     <div className="w-full max-w-md">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-               style={{background: '#E07B29'}}>📦</div>
-          <div className="text-left">
-            <div className="font-black text-xl text-white">Inambebar</div>
-            <div className="text-sm font-medium" style={{color: '#F5A04A'}}>اینم ببر</div>
-          </div>
+        <div className="flex justify-center mb-4">
+          <LogoStacked dark={true} markSize={64} nameSize={20} />
         </div>
         <p className="text-white/50 text-sm">
           {tab === 'signup' ? 'Create your free account' : 'Welcome back'}

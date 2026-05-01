@@ -12,7 +12,7 @@ export default function NewTrip() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [form, setForm] = useState({
-    origin_city: '', origin_country: 'Canada',
+    origin_city: '', origin_country: 'Germany',
     destination_city: 'Tehran', destination_country: 'Iran',
     departure_date: '', available_weight_kg: '', price_per_kg: '', notes: ''
   })

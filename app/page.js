@@ -2,18 +2,12 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLanguage } from '@/lib/LanguageContext'
-import { Search, MessageSquare, CheckCircle, Plane, ShieldCheck, Gift, Lock } from 'lucide-react'
+import { Search, MessageSquare, CheckCircle, Lock } from 'lucide-react'
 
 const STEPS = [
   { Icon: Search,        titleKey: 'step1Title', descKey: 'step1Desc' },
   { Icon: MessageSquare, titleKey: 'step2Title', descKey: 'step2Desc' },
   { Icon: CheckCircle,   titleKey: 'step3Title', descKey: 'step3Desc' },
-]
-
-const STAT_PILLS = (t) => [
-  { Icon: Plane,        label: `4 ${t.activeRoutes}` },
-  { Icon: ShieldCheck,  label: `100% ${t.idVerified}` },
-  { Icon: Gift,         label: t.freeToJoin },
 ]
 
 export default function Home() {
@@ -108,17 +102,6 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* Stat pills */}
-              <div className="flex flex-wrap gap-3 justify-center md:justify-start animate-fade-up delay-4">
-                {STAT_PILLS(t).map(({ Icon, label }) => (
-                  <div key={label}
-                       className="flex items-center gap-2 px-4 py-2 rounded-full"
-                       style={{background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)'}}>
-                    <Icon size={14} color="#F5A04A" />
-                    <span className="text-white text-sm">{label}</span>
-                  </div>
-                ))}
-              </div>
             </div>
 
             {/* RIGHT — Floating cards */}

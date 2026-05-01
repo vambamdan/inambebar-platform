@@ -12,6 +12,7 @@ import { LogoHorizontal } from '@/components/Logo'
 
 export default function Navbar() {
   const [user, setUser] = useState(null)
+  const [isVerified, setIsVerified] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef(null)
@@ -19,9 +20,17 @@ export default function Navbar() {
   const { t, toggleLang, lang, isFa } = useLanguage()
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
+    supabase.auth.getUser().then(async ({ data }) => {
+      setUser(data.user)
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from('profiles').select('is_verified').eq('id', data.user.id).single()
+        setIsVerified(profile?.is_verified ?? false)
+      }
+    })
     const { data: listener } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null)
+      if (!session?.user) setIsVerified(false)
     })
     return () => listener.subscription.unsubscribe()
   }, [])
@@ -75,6 +84,9 @@ export default function Navbar() {
           <Link href="/companion" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors whitespace-nowrap">
             {t.travelCompanion}
           </Link>
+          <Link href="/about" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors whitespace-nowrap">
+            {t.about || 'About'}
+          </Link>
         </div>
 
         {/* Right-side actions */}
@@ -114,11 +126,18 @@ export default function Navbar() {
                     className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                     <User size={15} className="text-gray-400" /> {t.myProfile}
                   </Link>
-                  <Link href="/verify" onClick={() => setDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold hover:bg-orange-50 transition-colors"
-                    style={{color: '#E07B29'}}>
-                    <ShieldCheck size={15} /> {t.getVerified}
-                  </Link>
+                  {isVerified ? (
+                    <div className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold"
+                      style={{color: '#2EBD7A'}}>
+                      <ShieldCheck size={15} /> {t.verified || 'Verified'}
+                    </div>
+                  ) : (
+                    <Link href="/verify" onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold hover:bg-orange-50 transition-colors"
+                      style={{color: '#E07B29'}}>
+                      <ShieldCheck size={15} /> {t.getVerified}
+                    </Link>
+                  )}
                   <div className="my-1 border-t border-gray-100" />
                   <button onClick={handleSignOut}
                     className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
@@ -176,12 +195,17 @@ export default function Navbar() {
           <Link href="/trips" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.findTravelers}</Link>
           <Link href="/requests" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.sendPackage}</Link>
           <Link href="/companion" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.travelCompanion}</Link>
+          <Link href="/about" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.about || 'About'}</Link>
           {user ? (
             <div className="border-t border-gray-100 pt-3 flex flex-col gap-3">
               <Link href="/dashboard" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.dashboard}</Link>
               <Link href="/matches" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myMatches}</Link>
               <Link href={`/profile/${user?.id}`} className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myProfile}</Link>
-              <Link href="/verify" className="text-sm font-medium" style={{color: '#E07B29'}} onClick={() => setMenuOpen(false)}>{t.getVerified}</Link>
+              {isVerified ? (
+                <span className="text-sm font-semibold" style={{color: '#2EBD7A'}}>✓ {t.verified || 'Verified'}</span>
+              ) : (
+                <Link href="/verify" className="text-sm font-medium" style={{color: '#E07B29'}} onClick={() => setMenuOpen(false)}>{t.getVerified}</Link>
+              )}
               <button onClick={handleSignOut} className="text-sm font-semibold text-left text-red-500">{t.signOut}</button>
             </div>
           ) : (
