@@ -17,12 +17,29 @@ export default function CompanionPage() {
 
   async function fetchAll() {
     setLoading(true)
-    const [offersRes, requestsRes] = await Promise.all([
-      supabase.from('companion_offers').select('*, profiles(full_name, rating_avg, rating_count, is_verified)')
-        .eq('status', 'active').order('travel_date', { ascending: true }),
-      supabase.from('companion_requests').select('*, profiles(full_name, rating_avg, rating_count, is_verified)')
-        .eq('status', 'open').order('created_at', { ascending: false })
-    ])
+
+    let offersQ = supabase
+      .from('companion_offers')
+      .select('*, profiles(full_name, rating_avg, rating_count, is_verified)')
+      .eq('status', 'active')
+      .order('travel_date', { ascending: true })
+
+    let requestsQ = supabase
+      .from('companion_requests')
+      .select('*, profiles(full_name, rating_avg, rating_count, is_verified)')
+      .eq('status', 'open')
+      .order('created_at', { ascending: false })
+
+    if (filters.origin) {
+      offersQ    = offersQ.ilike('origin_city', `%${filters.origin}%`)
+      requestsQ  = requestsQ.ilike('origin_city', `%${filters.origin}%`)
+    }
+    if (filters.destination) {
+      offersQ    = offersQ.ilike('destination_city', `%${filters.destination}%`)
+      requestsQ  = requestsQ.ilike('destination_city', `%${filters.destination}%`)
+    }
+
+    const [offersRes, requestsRes] = await Promise.all([offersQ, requestsQ])
     setCompanions(offersRes.data || [])
     setRequests(requestsRes.data || [])
     setLoading(false)
@@ -85,7 +102,8 @@ export default function CompanionPage() {
       </div>
 
       {/* Search */}
-      <div className="bg-white rounded-2xl p-5 border border-gray-100 mb-6">
+      <form onSubmit={e => { e.preventDefault(); fetchAll() }}
+        className="bg-white rounded-2xl p-5 border border-gray-100 mb-6">
         <div className="grid md:grid-cols-3 gap-4">
           <input type="text" placeholder={isFa ? 'از (شهر)' : 'From (city)'}
             value={filters.origin} onChange={e => setFilters(f => ({...f, origin: e.target.value}))}
@@ -93,11 +111,20 @@ export default function CompanionPage() {
           <input type="text" placeholder={isFa ? 'به (شهر)' : 'To (city)'}
             value={filters.destination} onChange={e => setFilters(f => ({...f, destination: e.target.value}))}
             className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-amber-400"/>
-          <button onClick={fetchAll} className="py-2.5 rounded-xl text-white font-bold text-sm" style={{background:'#E07B29'}}>
-            {isFa ? 'جستجو' : 'Search'}
-          </button>
+          <div className="flex gap-2">
+            <button type="submit" className="flex-1 py-2.5 rounded-xl text-white font-bold text-sm" style={{background:'#E07B29'}}>
+              {isFa ? 'جستجو' : 'Search'}
+            </button>
+            {(filters.origin || filters.destination) && (
+              <button type="button"
+                onClick={() => { setFilters({ origin: '', destination: '' }); fetchAll() }}
+                className="px-3 py-2.5 rounded-xl text-sm font-bold border border-gray-200 text-gray-400 hover:bg-gray-50">
+                ✕
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      </form>
 
       {loading ? (
         <div className="text-center py-16 text-gray-400">{isFa ? 'در حال بارگذاری...' : 'Loading...'}</div>
