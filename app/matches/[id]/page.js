@@ -398,6 +398,18 @@ export default function MatchChat() {
     }
   }
 
+  const quickReplies = useMemo(() => {
+    if (!match || !user) return []
+    const _isClosed = match.status === 'delivered' || match.status === 'cancelled'
+    if (_isClosed) return []
+    const _isTravel = match.traveler_id === user.id
+    const key = match.status === 'pending' ? `pending_${_isTravel ? 'traveler' : 'sender'}`
+      : match.status === 'accepted' ? 'accepted'
+      : match.status === 'in_transit' ? `in_transit_${_isTravel ? 'traveler' : 'sender'}`
+      : null
+    return key ? (QUICK_REPLIES[key] || []) : []
+  }, [match, user])
+
   if (loading) return (
     <div className="flex items-center justify-center h-full text-sm" style={{ color: FG3 }}>
       {t?.loading || 'Loading…'}
@@ -417,15 +429,6 @@ export default function MatchChat() {
   const contextKey = `${match.status}_${isTravel ? 'traveler' : 'sender'}`
   const primaryActions = STATUS_ACTIONS[contextKey] || []
   const showCancel = match.status === 'pending' || match.status === 'accepted'
-
-  const quickReplies = useMemo(() => {
-    if (isClosed) return []
-    const key = match.status === 'pending' ? `pending_${isTravel ? 'traveler' : 'sender'}`
-      : match.status === 'accepted' ? 'accepted'
-      : match.status === 'in_transit' ? `in_transit_${isTravel ? 'traveler' : 'sender'}`
-      : null
-    return key ? (QUICK_REPLIES[key] || []) : []
-  }, [match.status, isTravel, isClosed])
 
   const st = STATUS_BADGE[match.status] || STATUS_BADGE.pending
 
