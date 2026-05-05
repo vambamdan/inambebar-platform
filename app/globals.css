@@ -1,23 +1,143 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────────────────────
+   Inambebar Design Tokens
+   ────────────────────────────────────────────────────────────── */
+
 :root {
-  --amber: #E07B29;
+  /* ── Brand ─────────────────────────────────────────────────── */
+  --brand-navy:      #1A2744;
+  --brand-amber:     #E07B29;
+  --brand-green:     #2EBD7A;
+
+  /* Navy ramp */
+  --navy-950: #0B1220;
+  --navy-900: #111A2E;
+  --navy-800: #1A2744;
+  --navy-700: #233355;
+  --navy-600: #2E4068;
+  --navy-500: #3D5180;
+  --navy-400: #5C6F9A;
+  --navy-300: #8493B4;
+  --navy-200: #B4BED2;
+  --navy-100: #DCE2EE;
+  --navy-50:  #F4F6FB;
+
+  /* Amber ramp */
+  --amber-700: #B85F18;
+  --amber-600: #CB6B1E;
+  --amber-500: #E07B29;
+  --amber-400: #ED9351;
+  --amber-300: #F5B380;
+  --amber-200: #FAD2B0;
+  --amber-100: #FCE7D3;
+  --amber-50:  #FEF5EC;
+
+  /* Green ramp */
+  --green-700: #1F8A57;
+  --green-600: #259E66;
+  --green-500: #2EBD7A;
+  --green-400: #56CD93;
+  --green-300: #82DCAE;
+  --green-200: #B3E9CC;
+  --green-100: #D6F3E2;
+  --green-50:  #ECFAF2;
+
+  /* Semantic surfaces — dark default */
+  --bg-canvas:        #0B1220;
+  --bg-surface:       #111A2E;
+  --bg-elevated:      #1A2744;
+  --bg-card:          #16203A;
+  --bg-input:         #0F1730;
+  --bg-overlay:       rgba(11, 18, 32, 0.72);
+  --hairline:         rgba(255,255,255,0.07);
+  --hairline-strong:  rgba(255,255,255,0.12);
+
+  --fg-primary:       #F1F4FB;
+  --fg-secondary:     #A6B0CC;
+  --fg-tertiary:      #6E7A99;
+  --fg-on-amber:      #1A1208;
+  --fg-on-green:      #07210F;
+
+  /* ── Type ───────────────────────────────────────────────────── */
+  --font-sans:    'DM Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-fa:      'Vazirmatn', 'DM Sans', ui-sans-serif, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --text-xs:   12px;   --lh-xs:   16px;
+  --text-sm:   13px;   --lh-sm:   18px;
+  --text-base: 15px;   --lh-base: 22px;
+  --text-md:   16px;   --lh-md:   24px;
+  --text-lg:   18px;   --lh-lg:   26px;
+  --text-xl:   22px;   --lh-xl:   28px;
+  --text-2xl:  28px;   --lh-2xl:  34px;
+  --text-3xl:  36px;   --lh-3xl:  42px;
+  --text-4xl:  48px;   --lh-4xl:  54px;
+  --text-5xl:  64px;   --lh-5xl:  68px;
+
+  --tracking-tight:   -0.02em;
+  --tracking-normal:  -0.005em;
+  --tracking-wide:     0.02em;
+
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semi:    600;
+  --weight-bold:    700;
+
+  /* ── Spacing (4px base) ─────────────────────────────────────── */
+  --s-1:  4px;  --s-2:  8px;  --s-3:  12px;  --s-4:  16px;
+  --s-5:  20px; --s-6:  24px; --s-8:  32px;  --s-10: 40px;
+  --s-12: 48px; --s-16: 64px; --s-20: 80px;  --s-24: 96px;
+
+  /* ── Radii ──────────────────────────────────────────────────── */
+  --r-xs: 4px; --r-sm: 6px; --r-md: 8px; --r-lg: 12px;
+  --r-xl: 16px; --r-2xl: 20px; --r-pill: 999px;
+
+  /* ── Shadows ────────────────────────────────────────────────── */
+  --shadow-xs:  0 1px 2px rgba(0,0,0,0.20);
+  --shadow-sm:  0 2px 4px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.20);
+  --shadow-md:  0 6px 16px rgba(0,0,0,0.32), 0 2px 4px rgba(0,0,0,0.20);
+  --shadow-lg:  0 16px 32px rgba(0,0,0,0.40), 0 4px 8px rgba(0,0,0,0.24);
+  --shadow-amber-glow: 0 0 0 1px rgba(224,123,41,0.35), 0 8px 24px rgba(224,123,41,0.18);
+  --shadow-focus-ring: 0 0 0 3px rgba(224,123,41,0.35);
+
+  /* ── Motion ─────────────────────────────────────────────────── */
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --ease-emphatic: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast:   120ms;
+  --dur-base:   200ms;
+  --dur-slow:   320ms;
+
+  /* ── Layout ─────────────────────────────────────────────────── */
+  --container-max:    1280px;
+  --gutter-mobile:    20px;
+  --gutter-desktop:   32px;
+  --header-height:    72px;
+
+  /* Legacy aliases */
+  --amber:      #E07B29;
   --amber-light: #F5A04A;
-  --amber-glow: rgba(224, 123, 41, 0.4);
-  --navy: #1A2744;
-  --navy-dark: #0F1A35;
-  --navy-mid: #253560;
-  --surface: #F8FAFC;
+  --amber-glow:  rgba(224, 123, 41, 0.4);
+  --navy:       #1A2744;
+  --navy-dark:  #0B1220;
+  --navy-mid:   #233355;
+  --surface:    #0B1220;
 }
 
+/* ── Base ────────────────────────────────────────────────── */
 body {
-  background: #ffffff;
-  color: var(--navy);
-  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg-canvas);
+  color: var(--fg-primary);
+  font-family: var(--font-sans);
 }
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--navy-900); }
+::-webkit-scrollbar-thumb { background: var(--navy-600); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--amber-500); }
 
 /* ── Keyframes ─────────────────────────────────────────── */
-
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -33,62 +153,47 @@ body {
   100% { background-position:  200% center; }
 }
 
+@keyframes pulse-amber {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
 /* ── Animation utilities ───────────────────────────────── */
+.animate-fade-up { animation: fadeUp 0.65s ease both; }
+.animate-float   { animation: float 5s ease-in-out infinite; }
+.animate-float-2 { animation: float 5.5s ease-in-out infinite; animation-delay: -2s; }
+.animate-float-3 { animation: float 4.5s ease-in-out infinite; animation-delay: -3.5s; }
 
-.animate-fade-up {
-  animation: fadeUp 0.65s ease both;
-}
-
-.animate-float {
-  animation: float 5s ease-in-out infinite;
-}
-
-/* Different phase offsets so cards bob independently */
-.animate-float-2 {
-  animation: float 5.5s ease-in-out infinite;
-  animation-delay: -2s;
-}
-.animate-float-3 {
-  animation: float 4.5s ease-in-out infinite;
-  animation-delay: -3.5s;
-}
-
-/* Stagger delays for hero entrance */
 .delay-1 { animation-delay: 0.10s; }
 .delay-2 { animation-delay: 0.22s; }
 .delay-3 { animation-delay: 0.38s; }
 .delay-4 { animation-delay: 0.55s; }
 
 /* ── Button interactions ────────────────────────────────── */
-
-/* Primary (amber) — lift + glow shadow + press */
 .btn-primary {
   transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(224, 123, 41, 0.45);
+  box-shadow: 0 10px 28px rgba(224, 123, 41, 0.40);
 }
 .btn-primary:active {
   transform: scale(0.96);
   box-shadow: 0 3px 10px rgba(224, 123, 41, 0.3);
 }
 
-/* Secondary (glass/white) — lift + soft shadow + press */
 .btn-secondary {
   transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
 .btn-secondary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 .btn-secondary:active {
   transform: scale(0.96);
-  box-shadow: none;
 }
 
-/* ── Nav link — underline grows from center ─────────────── */
-
+/* ── Nav link — underline from center ─────────────── */
 .nav-link {
   position: relative;
   transition: color 0.2s ease;
@@ -96,46 +201,33 @@ body {
 .nav-link::after {
   content: '';
   position: absolute;
-  bottom: -3px;
-  left: 50%;
-  width: 0;
-  height: 2px;
+  bottom: -3px; left: 50%;
+  width: 0; height: 2px;
   background: #E07B29;
   border-radius: 1px;
   transition: width 0.25s ease, left 0.25s ease;
 }
-.nav-link:hover::after {
-  width: 100%;
-  left: 0;
-}
+.nav-link:hover::after { width: 100%; left: 0; }
 
-/* RTL: grow underline from right instead */
-[dir="rtl"] .nav-link::after {
-  left: auto;
-  right: 50%;
-  transition: width 0.25s ease, right 0.25s ease;
-}
-[dir="rtl"] .nav-link:hover::after {
-  right: 0;
-}
+[dir="rtl"] .nav-link::after { left: auto; right: 50%; transition: width 0.25s ease, right 0.25s ease; }
+[dir="rtl"] .nav-link:hover::after { right: 0; }
 
-/* ── Card hover — lift + shadow ─────────────────────────── */
-
+/* ── Card hover ─────────────────────────────────────── */
 .card-hover {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.22s var(--ease-emphatic), box-shadow 0.22s ease, border-color 0.2s ease;
 }
 .card-hover:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(26, 39, 68, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.35), 0 4px 8px rgba(0,0,0,0.2);
+  border-color: rgba(255,255,255,0.14) !important;
 }
 
-/* ── Navbar "Get Started" shimmer ───────────────────────── */
-
+/* ── Shimmer (dark) ─────────────────────────────────── */
 .btn-shimmer {
   transition: transform 0.15s ease, background-position 0.5s ease;
 }
 .btn-shimmer:hover {
-  background: linear-gradient(90deg, #1A2744 25%, #2D4070 50%, #1A2744 75%) !important;
+  background: linear-gradient(90deg, #233355 25%, #2E4068 50%, #233355 75%) !important;
   background-size: 200% auto !important;
   animation: shimmer 1.8s linear infinite;
   transform: translateY(-1px);
@@ -145,9 +237,7 @@ body {
   animation: none;
 }
 
-/* ── Scrollbar ──────────────────────────────────────────── */
-
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f1f1f1; }
-::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--amber); }
+/* ── Dark input reset ──────────────────────────────── */
+input, select, textarea {
+  color-scheme: dark;
+}

@@ -1,135 +1,161 @@
 'use client'
 import Link from 'next/link'
+import { Plane, Package, Users, ShieldCheck, MapPin, Mail, Info, ArrowRight } from 'lucide-react'
 import { useLanguage } from '@/lib/LanguageContext'
+
+const CARD_BG  = '#16203A'
+const HAIRLINE = 'rgba(255,255,255,0.07)'
+const FG1      = '#F1F4FB'
+const FG2      = '#A6B0CC'
+const FG3      = '#6E7A99'
+
+const SERVICES_EN = [
+  { Icon: Plane,   title: 'Traveler Luggage Space', desc: 'Travelers post upcoming trips and available luggage space. Senders browse, connect, and arrange delivery. Both parties benefit.' },
+  { Icon: Package, title: 'Shipment Requests',       desc: 'Need something sent? Post a request describing your package. Travelers on your route see it and offer to carry it.' },
+  { Icon: Users,   title: 'Travel Companion',        desc: 'Need someone to travel alongside you or a family member? Our Travel Companion service connects people making the same journey.' },
+]
+
+const SERVICES_FA = [
+  { Icon: Plane,   title: 'ظرفیت بار مسافر',     desc: 'مسافرانی که قرار است پرواز کنند، فضای اضافه چمدان خود را ثبت می‌کنند. فرستنده‌ها می‌توانند آن‌ها را پیدا کنند و بسته را بفرستند.' },
+  { Icon: Package, title: 'درخواست ارسال بسته', desc: 'اگر می‌خواهید بسته‌ای بفرستید، درخواستتان را ثبت کنید. مسافرانی که در همان مسیر سفر می‌کنند پیشنهاد حمل می‌دهند.' },
+  { Icon: Users,   title: 'همراه سفر',           desc: 'نیاز دارید کسی همراه سفرتان باشد؟ سرویس همراه سفر ما این ارتباط را ممکن می‌سازد.' },
+]
 
 export default function AboutPage() {
   const { isFa } = useLanguage()
   const fontStyle = isFa ? { fontFamily: "'Vazirmatn', sans-serif" } : {}
-
-  if (isFa) return (
-    <div className="max-w-3xl mx-auto px-4 py-12" style={fontStyle} dir="rtl">
-      <div className="mb-10">
-        <p className="text-sm font-bold mb-3" style={{color:'#E07B29'}}>درباره ما</p>
-        <h1 className="text-4xl font-black mb-3" style={{color:'#1A2744'}}>اینم ببر</h1>
-        <p className="text-xl text-gray-500 leading-relaxed">پلتفرمی برای ارتباط مسافرین ایرانی با فرستنده‌های بسته در سراسر جهان</p>
-      </div>
-
-      <div className="bg-amber-50 border border-amber-100 rounded-2xl p-6 mb-10">
-        <p className="text-sm font-bold text-amber-700 mb-2">📌 نکته مهم</p>
-        <p className="text-amber-700 text-sm leading-relaxed">
-          اینم ببر یک پروژه دانشجویی است که با هدف کمک به جامعه ایرانی ایجاد شده. در سال اول راه‌اندازی، این سرویس کاملاً رایگان ارائه می‌شود. هدف اصلی ما در این مرحله کمک به مردم است، نه کسب سود.
-        </p>
-      </div>
-
-      <div className="space-y-8 text-gray-600 leading-relaxed">
-        <section>
-          <h2 className="text-xl font-bold mb-3" style={{color:'#1A2744'}}>چرا اینم ببر؟</h2>
-          <p>
-            هر ایرانی مهاجر این داستان را می‌شناسد: یک کیف پر از پسته، زعفران، یا دارو که باید به ایران برسد. یا یک لپتاپ که باید از ایران بیاید. ارسال از طریق پست بین‌المللی گران، کند، و گاهی غیرممکن است. اینم ببر برای حل همین مشکل ساخته شده.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-bold mb-3" style={{color:'#1A2744'}}>چطور کار می‌کند؟</h2>
-          <p className="mb-4">پلتفرم ما سه سرویس اصلی ارائه می‌دهد:</p>
-          <div className="space-y-3">
-            {[
-              {icon:'✈️', title:'ظرفیت بار مسافر', desc:'مسافرانی که قرار است به مقصدی پرواز کنند، فضای اضافه چمدان خود را ثبت می‌کنند. فرستنده‌ها می‌توانند آن‌ها را پیدا کنند، قرارداد ببندند، و بسته را بفرستند.'},
-              {icon:'📦', title:'درخواست ارسال بسته', desc:'اگر می‌خواهید بسته‌ای بفرستید، درخواستتان را ثبت کنید. مسافرانی که در همان مسیر سفر می‌کنند پیشنهاد حمل می‌دهند.'},
-              {icon:'🤝', title:'همراه سفر', desc:'نیاز دارید کسی همراه سفرتان باشد؟ یا می‌خواهید به یک مسافر تنها کمک کنید؟ سرویس همراه سفر ما این ارتباط را ممکن می‌سازد.'},
-            ].map(s => (
-              <div key={s.title} className="flex gap-4 bg-gray-50 rounded-xl p-4">
-                <div className="text-2xl">{s.icon}</div>
-                <div>
-                  <div className="font-bold text-sm mb-1" style={{color:'#1A2744'}}>{s.title}</div>
-                  <div className="text-sm text-gray-500">{s.desc}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-bold mb-3" style={{color:'#1A2744'}}>امنیت و اعتماد</h2>
-          <p>همه کاربران باید هویتشان را با مدرک معتبر و عکس سلفی تأیید کنند. تمام پیام‌ها در پلتفرم ثبت می‌شوند. عکس بسته هنگام تحویل گرفته می‌شود. این ها همه برای ایجاد یک محیط امن برای هر دو طرف است.</p>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-bold mb-3" style={{color:'#1A2744'}}>تماس با ما</h2>
-          <p>سوال دارید؟ با ما در تماس باشید: <a href="mailto:info@inambebar.com" className="underline" style={{color:'#E07B29'}}>info@inambebar.com</a></p>
-        </section>
-      </div>
-
-      <div className="mt-12 text-center">
-        <Link href="/auth?tab=signup"
-          className="inline-block px-8 py-4 rounded-xl text-white font-bold" style={{background:'#E07B29'}}>
-          همین الان عضو شوید ←
-        </Link>
-      </div>
-    </div>
-  )
+  const services  = isFa ? SERVICES_FA : SERVICES_EN
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
-      <div className="mb-10">
-        <p className="text-sm font-bold mb-3" style={{color:'#E07B29'}}>About Us</p>
-        <h1 className="text-4xl font-black mb-3" style={{color:'#1A2744'}}>Inambebar — اینم ببر</h1>
-        <p className="text-xl text-gray-500 leading-relaxed">&quot;Take This Too&quot; — Connecting the Iranian diaspora through trusted peer-to-peer delivery.</p>
-      </div>
+    <div className="min-h-screen" style={{ background: '#0B1220', paddingTop: 72, ...fontStyle }} dir={isFa ? 'rtl' : 'ltr'}>
+      <div className="max-w-3xl mx-auto px-6 py-14">
 
-      <div className="bg-amber-50 border border-amber-100 rounded-2xl p-6 mb-10">
-        <p className="text-sm font-bold text-amber-700 mb-2">📌 Important Note</p>
-        <p className="text-amber-700 text-sm leading-relaxed">
-          Inambebar is a student project created with the purpose of helping the Iranian diaspora community. During our first year of operation, this service is provided completely free of charge. Our primary goal at this stage is to help people, not to generate profit.
-        </p>
-      </div>
+        {/* ── Header ── */}
+        <div className="mb-12">
+          <p className="text-xs font-semibold mb-3 tracking-widest uppercase" style={{ color: '#E07B29' }}>
+            {isFa ? 'درباره ما' : 'About Us'}
+          </p>
+          <h1 className="text-4xl font-bold tracking-tight mb-4" style={{ color: FG1, letterSpacing: '-0.025em' }}>
+            {isFa ? 'اینم ببر' : 'Inambebar — اینم ببر'}
+          </h1>
+          <p className="text-lg leading-relaxed" style={{ color: FG2 }}>
+            {isFa
+              ? 'پلتفرمی برای ارتباط مسافرین ایرانی با فرستنده‌های بسته در سراسر جهان'
+              : '"Take This Too" — Connecting the Iranian diaspora through trusted peer-to-peer delivery.'}
+          </p>
+        </div>
 
-      <div className="space-y-8 text-gray-600 leading-relaxed">
-        <section>
-          <h2 className="text-xl font-bold mb-3" style={{color:'#1A2744'}}>Why Inambebar?</h2>
-          <p>Every member of the Iranian diaspora knows the story: a bag full of saffron, pistachios, or medicine that needs to get to Iran. Or a laptop that needs to come back. International shipping is expensive, slow, and sometimes impossible through official channels. Inambebar was built to solve exactly this problem — by connecting people who are already making the trip with people who need something carried.</p>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-bold mb-3" style={{color:'#1A2744'}}>What We Offer</h2>
-          <div className="space-y-3">
-            {[
-              {icon:'✈️', title:'Traveler Luggage Space', desc:'Travelers post their upcoming trips and available luggage space. Senders browse, connect, and arrange delivery. Both parties benefit.'},
-              {icon:'📦', title:'Shipment Requests', desc:'Need something sent? Post a request describing your package. Travelers on your route see it and offer to carry it.'},
-              {icon:'🤝', title:'Travel Companion', desc:'Need someone to travel alongside you or a family member? Or want to offer companionship to a solo traveler? Our Travel Companion service connects people making the same journey.'},
-            ].map(s => (
-              <div key={s.title} className="flex gap-4 bg-gray-50 rounded-xl p-4">
-                <div className="text-2xl">{s.icon}</div>
-                <div>
-                  <div className="font-bold text-sm mb-1" style={{color:'#1A2744'}}>{s.title}</div>
-                  <div className="text-sm text-gray-500">{s.desc}</div>
-                </div>
-              </div>
-            ))}
+        {/* ── Important note banner ── */}
+        <div className="rounded-2xl p-5 mb-10 flex gap-4"
+          style={{ background: 'rgba(224,123,41,0.06)', border: '1px solid rgba(224,123,41,0.18)' }}>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+            style={{ background: 'rgba(224,123,41,0.12)' }}>
+            <Info size={16} style={{ color: '#E07B29' }} strokeWidth={1.8} />
           </div>
-        </section>
+          <div>
+            <p className="text-sm font-semibold mb-1.5" style={{ color: '#F5B380' }}>
+              {isFa ? 'نکته مهم' : 'Important Note'}
+            </p>
+            <p className="text-sm leading-relaxed" style={{ color: '#FAD2B0' }}>
+              {isFa
+                ? 'اینم ببر یک پروژه است که با هدف کمک به جامعه ایرانی ایجاد شده. در سال اول راه‌اندازی، این سرویس کاملاً رایگان ارائه می‌شود.'
+                : 'Inambebar was created to help the Iranian diaspora community. During our first year of operation, this service is provided completely free of charge. Our primary goal is to help people.'}
+            </p>
+          </div>
+        </div>
 
-        <section>
-          <h2 className="text-xl font-bold mb-3" style={{color:'#1A2744'}}>Safety & Trust</h2>
-          <p>Every user on Inambebar must verify their identity with a government-issued ID and a live selfie before they can transact. All messages are logged on our platform — not on WhatsApp, not over email. Packages are photographed at handoff. These aren&apos;t just features — they&apos;re the reason you can trust a stranger with your package.</p>
-        </section>
+        {/* ── Body sections ── */}
+        <div className="space-y-5">
 
-        <section>
-          <h2 className="text-xl font-bold mb-3" style={{color:'#1A2744'}}>Our Routes</h2>
-          <p>We serve the most important corridors for the Iranian diaspora: Tehran, Mashhad, Shiraz, Isfahan, Tabriz, and all major Iranian cities connected to Toronto, Dubai, London, Stockholm, Frankfurt, Amsterdam, Los Angeles, Paris, and beyond. If Iranians fly it, we serve it.</p>
-        </section>
+          {/* Why section */}
+          <section className="rounded-2xl p-7" style={{ background: CARD_BG, border: `1px solid ${HAIRLINE}` }}>
+            <h2 className="text-lg font-semibold mb-4" style={{ color: FG1, letterSpacing: '-0.015em' }}>
+              {isFa ? 'چرا اینم ببر؟' : 'Why Inambebar?'}
+            </h2>
+            <p className="leading-relaxed text-sm" style={{ color: FG2 }}>
+              {isFa
+                ? 'هر ایرانی مهاجر این داستان را می‌شناسد: یک کیف پر از پسته، زعفران، یا دارو که باید به ایران برسد. یا یک لپتاپ که باید از ایران بیاید. ارسال از طریق پست بین‌المللی گران، کند، و گاهی غیرممکن است. اینم ببر برای حل همین مشکل ساخته شده.'
+                : 'Every member of the Iranian diaspora knows the story: a bag full of saffron, pistachios, or medicine that needs to get to Iran. Or a laptop that needs to come back. International shipping is expensive, slow, and sometimes impossible through official channels. Inambebar was built to solve exactly this problem — by connecting people who are already making the trip with people who need something carried.'}
+            </p>
+          </section>
 
-        <section>
-          <h2 className="text-xl font-bold mb-3" style={{color:'#1A2744'}}>Contact</h2>
-          <p>Questions? Reach us at <a href="mailto:info@inambebar.com" className="underline" style={{color:'#E07B29'}}>info@inambebar.com</a></p>
-        </section>
-      </div>
+          {/* Services */}
+          <section>
+            <h2 className="text-lg font-semibold mb-4 px-1" style={{ color: FG1, letterSpacing: '-0.015em' }}>
+              {isFa ? 'چطور کار می‌کند؟' : 'What We Offer'}
+            </h2>
+            <div className="space-y-3">
+              {services.map(({ Icon, title, desc }) => (
+                <div key={title} className="rounded-2xl p-5 flex gap-4" style={{ background: CARD_BG, border: `1px solid ${HAIRLINE}` }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+                    style={{ background: 'rgba(224,123,41,0.08)', border: '1px solid rgba(224,123,41,0.15)' }}>
+                    <Icon size={18} style={{ color: '#E07B29' }} strokeWidth={1.6} />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm mb-1.5" style={{ color: FG1 }}>{title}</div>
+                    <p className="text-sm leading-relaxed" style={{ color: FG2 }}>{desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
 
-      <div className="mt-12 text-center">
-        <Link href="/auth?tab=signup"
-          className="inline-block px-8 py-4 rounded-xl text-white font-bold" style={{background:'#E07B29'}}>
-          Join Inambebar Free →
-        </Link>
+          {/* Safety */}
+          <section className="rounded-2xl p-7" style={{ background: CARD_BG, border: `1px solid ${HAIRLINE}` }}>
+            <div className="flex items-center gap-2 mb-4">
+              <ShieldCheck size={18} style={{ color: '#2EBD7A' }} strokeWidth={1.8} />
+              <h2 className="text-lg font-semibold" style={{ color: FG1, letterSpacing: '-0.015em' }}>
+                {isFa ? 'امنیت و اعتماد' : 'Safety & Trust'}
+              </h2>
+            </div>
+            <p className="leading-relaxed text-sm" style={{ color: FG2 }}>
+              {isFa
+                ? 'همه کاربران باید هویتشان را با مدرک معتبر و عکس سلفی تأیید کنند. تمام پیام‌ها در پلتفرم ثبت می‌شوند. عکس بسته هنگام تحویل گرفته می‌شود. این‌ها همه برای ایجاد یک محیط امن برای هر دو طرف است.'
+                : "Every user must verify their identity with a government-issued ID and a live selfie before transacting. All messages are logged on our platform. Packages are photographed at handoff. These aren't just features — they're the reason you can trust a stranger with your package."}
+            </p>
+          </section>
+
+          {/* Routes */}
+          {!isFa && (
+            <section className="rounded-2xl p-7" style={{ background: CARD_BG, border: `1px solid ${HAIRLINE}` }}>
+              <div className="flex items-center gap-2 mb-4">
+                <MapPin size={18} style={{ color: '#E07B29' }} strokeWidth={1.8} />
+                <h2 className="text-lg font-semibold" style={{ color: FG1, letterSpacing: '-0.015em' }}>Our Routes</h2>
+              </div>
+              <p className="leading-relaxed text-sm" style={{ color: FG2 }}>
+                We serve the most important corridors for the Iranian diaspora: Tehran, Mashhad, Shiraz, Isfahan connected to Toronto, Dubai, London, Stockholm, Frankfurt, Amsterdam, Los Angeles, Paris, and beyond. If Iranians fly it, we serve it.
+              </p>
+            </section>
+          )}
+
+          {/* Contact */}
+          <section className="rounded-2xl p-7" style={{ background: CARD_BG, border: `1px solid ${HAIRLINE}` }}>
+            <div className="flex items-center gap-2 mb-4">
+              <Mail size={18} style={{ color: FG2 }} strokeWidth={1.8} />
+              <h2 className="text-lg font-semibold" style={{ color: FG1, letterSpacing: '-0.015em' }}>
+                {isFa ? 'تماس با ما' : 'Contact'}
+              </h2>
+            </div>
+            <p className="text-sm" style={{ color: FG2 }}>
+              {isFa ? 'سوال دارید؟ با ما در تماس باشید:' : 'Questions? Reach us at'}{' '}
+              <a href="mailto:info@inambebar.com" className="font-semibold transition-colors hover:opacity-80"
+                style={{ color: '#E07B29' }}>
+                info@inambebar.com
+              </a>
+            </p>
+          </section>
+        </div>
+
+        {/* ── CTA ── */}
+        <div className="mt-12 text-center">
+          <Link href="/auth?tab=signup"
+            className="btn-primary inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-white font-semibold text-sm"
+            style={{ background: '#E07B29' }}>
+            {isFa ? 'همین الان عضو شوید' : 'Join Inambebar Free'}
+            <ArrowRight size={15} />
+          </Link>
+        </div>
+
       </div>
     </div>
   )

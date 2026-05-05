@@ -9,10 +9,12 @@ import {
   ShieldCheck, LogOut, Menu, X,
 } from 'lucide-react'
 import { LogoHorizontal } from '@/components/Logo'
+import NotificationBell from '@/components/NotificationBell'
 
 export default function Navbar() {
   const [user, setUser] = useState(null)
   const [isVerified, setIsVerified] = useState(false)
+  const [pendingCount, setPendingCount] = useState(0)
   const [menuOpen, setMenuOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef(null)
@@ -23,9 +25,16 @@ export default function Navbar() {
     supabase.auth.getUser().then(async ({ data }) => {
       setUser(data.user)
       if (data.user) {
-        const { data: profile } = await supabase
-          .from('profiles').select('is_verified').eq('id', data.user.id).single()
-        setIsVerified(profile?.is_verified ?? false)
+        const [profileRes, matchesRes] = await Promise.all([
+          supabase.from('profiles').select('is_verified').eq('id', data.user.id).single(),
+          supabase
+            .from('matches')
+            .select('id', { count: 'exact', head: true })
+            .or(`traveler_id.eq.${data.user.id},sender_id.eq.${data.user.id}`)
+            .in('status', ['pending', 'accepted', 'in_transit']),
+        ])
+        setIsVerified(profileRes.data?.is_verified ?? false)
+        setPendingCount(matchesRes.count || 0)
       }
     })
     const { data: listener } = supabase.auth.onAuthStateChange((_e, session) => {
@@ -56,35 +65,52 @@ export default function Navbar() {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 border-b border-gray-100/80"
+      className="fixed top-0 left-0 right-0 z-50"
       style={{
-        background: 'rgba(255,255,255,0.88)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        boxShadow: '0 1px 0 rgba(0,0,0,0.06)',
+        background: 'rgba(11,18,32,0.88)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        height: 72,
         direction: 'ltr',
         ...fontStyle,
       }}
     >
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center gap-6">
+      <div className="max-w-7xl mx-auto px-8 h-full flex items-center gap-8">
 
         {/* Logo */}
         <Link href="/" className="flex-shrink-0 transition-opacity hover:opacity-80">
-          <LogoHorizontal dark={false} markSize={36} />
+          <LogoHorizontal dark={true} markSize={36} />
         </Link>
 
         {/* Nav links */}
-        <div className="hidden md:flex items-center gap-5 flex-1">
-          <Link href="/trips" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors whitespace-nowrap">
+        <div className="hidden md:flex items-center gap-6 flex-1">
+          <Link href="/trips"
+            className="nav-link text-sm font-medium transition-colors whitespace-nowrap"
+            style={{ color: '#A6B0CC' }}
+            onMouseEnter={e => e.target.style.color = '#F1F4FB'}
+            onMouseLeave={e => e.target.style.color = '#A6B0CC'}>
             {t.findTravelers}
           </Link>
-          <Link href="/requests" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors whitespace-nowrap">
+          <Link href="/requests"
+            className="nav-link text-sm font-medium transition-colors whitespace-nowrap"
+            style={{ color: '#A6B0CC' }}
+            onMouseEnter={e => e.target.style.color = '#F1F4FB'}
+            onMouseLeave={e => e.target.style.color = '#A6B0CC'}>
             {t.sendPackage}
           </Link>
-          <Link href="/companion" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors whitespace-nowrap">
+          <Link href="/companion"
+            className="nav-link text-sm font-medium transition-colors whitespace-nowrap"
+            style={{ color: '#A6B0CC' }}
+            onMouseEnter={e => e.target.style.color = '#F1F4FB'}
+            onMouseLeave={e => e.target.style.color = '#A6B0CC'}>
             {t.travelCompanion}
           </Link>
-          <Link href="/about" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors whitespace-nowrap">
+          <Link href="/about"
+            className="nav-link text-sm font-medium transition-colors whitespace-nowrap"
+            style={{ color: '#A6B0CC' }}
+            onMouseEnter={e => e.target.style.color = '#F1F4FB'}
+            onMouseLeave={e => e.target.style.color = '#A6B0CC'}>
             {t.about || 'About'}
           </Link>
         </div>
@@ -95,52 +121,78 @@ export default function Navbar() {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(o => !o)}
-                className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0 active:scale-95"
+                className="relative w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0 active:scale-95"
                 style={{
                   background: 'linear-gradient(135deg, #E07B29, #F5A04A)',
                   transition: 'transform 0.15s ease, box-shadow 0.2s ease',
-                  boxShadow: dropdownOpen ? '0 0 0 3px rgba(224,123,41,0.25)' : '0 2px 8px rgba(224,123,41,0.3)',
+                  boxShadow: dropdownOpen ? '0 0 0 3px rgba(224,123,41,0.35)' : '0 2px 8px rgba(224,123,41,0.3)',
                 }}>
                 {userInitial}
+                {pendingCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full text-white flex items-center justify-center text-[9px] font-bold"
+                    style={{ background: '#E07B29', border: '1.5px solid #0B1220' }}>
+                    {pendingCount > 9 ? '9+' : pendingCount}
+                  </span>
+                )}
               </button>
 
               {dropdownOpen && (
                 <div
                   className="absolute right-0 top-12 w-52 rounded-2xl py-1.5 z-50"
                   style={{
-                    background: 'rgba(255,255,255,0.97)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
-                    border: '1px solid rgba(0,0,0,0.08)',
-                    boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
+                    background: '#16203A',
+                    border: '1px solid rgba(255,255,255,0.10)',
+                    boxShadow: '0 16px 48px rgba(0,0,0,0.50)',
                   }}>
                   <Link href="/dashboard" onClick={() => setDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <LayoutDashboard size={15} className="text-gray-400" /> {t.dashboard}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors"
+                    style={{ color: '#A6B0CC' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#F1F4FB' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#A6B0CC' }}>
+                    <LayoutDashboard size={15} style={{ color: '#6E7A99' }} /> {t.dashboard}
                   </Link>
                   <Link href="/matches" onClick={() => setDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <MessageSquare size={15} className="text-gray-400" /> {t.myMatches}
+                    className="flex items-center justify-between px-4 py-2.5 text-sm transition-colors"
+                    style={{ color: '#A6B0CC' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#F1F4FB' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#A6B0CC' }}>
+                    <span className="flex items-center gap-2.5">
+                      <MessageSquare size={15} style={{ color: '#6E7A99' }} /> Conversations
+                    </span>
+                    {pendingCount > 0 && (
+                      <span className="text-xs font-bold px-1.5 py-0.5 rounded-full text-white min-w-[18px] text-center"
+                        style={{ background: '#E07B29' }}>
+                        {pendingCount}
+                      </span>
+                    )}
                   </Link>
                   <Link href={`/profile/${user?.id}`} onClick={() => setDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <User size={15} className="text-gray-400" /> {t.myProfile}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors"
+                    style={{ color: '#A6B0CC' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#F1F4FB' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#A6B0CC' }}>
+                    <User size={15} style={{ color: '#6E7A99' }} /> {t.myProfile}
                   </Link>
                   {isVerified ? (
                     <div className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold"
-                      style={{color: '#2EBD7A'}}>
+                      style={{ color: '#2EBD7A' }}>
                       <ShieldCheck size={15} /> {t.verified || 'Verified'}
                     </div>
                   ) : (
                     <Link href="/verify" onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold hover:bg-orange-50 transition-colors"
-                      style={{color: '#E07B29'}}>
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold transition-colors"
+                      style={{ color: '#E07B29' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(224,123,41,0.08)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                       <ShieldCheck size={15} /> {t.getVerified}
                     </Link>
                   )}
-                  <div className="my-1 border-t border-gray-100" />
+                  <div className="my-1" style={{ height: 1, background: 'rgba(255,255,255,0.07)' }} />
                   <button onClick={handleSignOut}
-                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors"
+                    style={{ color: '#E04B4B' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(224,75,75,0.08)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                     <LogOut size={15} /> {t.signOut}
                   </button>
                 </div>
@@ -148,27 +200,37 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <Link href="/auth" className="nav-link text-sm font-medium text-gray-600 hover:text-amber-600 transition-colors">
+              <Link href="/auth"
+                className="text-sm font-medium transition-colors"
+                style={{ color: '#A6B0CC' }}
+                onMouseEnter={e => e.target.style.color = '#F1F4FB'}
+                onMouseLeave={e => e.target.style.color = '#A6B0CC'}>
                 {t.signIn}
               </Link>
               <Link href="/auth?tab=signup"
                 className="btn-shimmer text-sm font-semibold px-4 py-2 rounded-lg text-white whitespace-nowrap"
-                style={{background: '#1A2744'}}>
+                style={{ background: '#233355', border: '1px solid rgba(255,255,255,0.12)' }}>
                 {t.getStarted}
               </Link>
             </>
           )}
 
+          {user && <NotificationBell userId={user.id} />}
+
           {/* Language toggle */}
-          <div className="pl-3 border-l border-gray-200">
+          <div className="pl-3" style={{ borderLeft: '1px solid rgba(255,255,255,0.10)' }}>
             <button onClick={toggleLang}
-              className="text-xs font-bold px-2.5 py-1.5 rounded-lg border border-gray-200 hover:border-amber-400 hover:text-amber-600 active:scale-95"
+              className="text-xs font-bold px-2.5 py-1.5 rounded-lg active:scale-95"
               style={{
-                color: '#1A2744',
+                color: '#A6B0CC',
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.10)',
                 minWidth: '36px',
                 textAlign: 'center',
                 transition: 'color 0.2s ease, border-color 0.2s ease, transform 0.15s ease',
-              }}>
+              }}
+              onMouseEnter={e => { e.target.style.color = '#F1F4FB'; e.target.style.borderColor = 'rgba(224,123,41,0.5)' }}
+              onMouseLeave={e => { e.target.style.color = '#A6B0CC'; e.target.style.borderColor = 'rgba(255,255,255,0.10)' }}>
               {lang === 'fa' ? 'فا' : lang.toUpperCase()}
             </button>
           </div>
@@ -177,43 +239,54 @@ export default function Navbar() {
         {/* Mobile: lang + hamburger */}
         <div className="md:hidden flex items-center gap-2 ml-auto">
           <button onClick={toggleLang}
-            className="text-xs font-bold px-2 py-1 rounded border border-gray-200 active:scale-95"
-            style={{minWidth: '32px', textAlign: 'center', transition: 'transform 0.15s ease'}}>
+            className="text-xs font-bold px-2 py-1 rounded active:scale-95"
+            style={{
+              minWidth: '32px', textAlign: 'center',
+              color: '#A6B0CC', background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.10)',
+              transition: 'transform 0.15s ease',
+            }}>
             {lang === 'fa' ? 'فا' : lang.toUpperCase()}
           </button>
-          <button className="p-2 active:scale-95" style={{transition: 'transform 0.15s ease'}}
+          <button className="p-2 active:scale-95" style={{ transition: 'transform 0.15s ease', color: '#A6B0CC' }}
             onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <X size={20} className="text-gray-600" /> : <Menu size={20} className="text-gray-600" />}
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden border-t border-gray-100 px-4 py-4 flex flex-col gap-4"
-             style={{background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', ...fontStyle}}>
-          <Link href="/trips" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.findTravelers}</Link>
-          <Link href="/requests" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.sendPackage}</Link>
-          <Link href="/companion" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.travelCompanion}</Link>
-          <Link href="/about" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.about || 'About'}</Link>
+        <div className="md:hidden px-6 py-5 flex flex-col gap-4"
+          style={{
+            background: 'rgba(11,18,32,0.97)',
+            borderTop: '1px solid rgba(255,255,255,0.07)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            ...fontStyle,
+          }}>
+          <Link href="/trips" className="text-sm font-medium" style={{ color: '#A6B0CC' }} onClick={() => setMenuOpen(false)}>{t.findTravelers}</Link>
+          <Link href="/requests" className="text-sm font-medium" style={{ color: '#A6B0CC' }} onClick={() => setMenuOpen(false)}>{t.sendPackage}</Link>
+          <Link href="/companion" className="text-sm font-medium" style={{ color: '#A6B0CC' }} onClick={() => setMenuOpen(false)}>{t.travelCompanion}</Link>
+          <Link href="/about" className="text-sm font-medium" style={{ color: '#A6B0CC' }} onClick={() => setMenuOpen(false)}>{t.about || 'About'}</Link>
           {user ? (
-            <div className="border-t border-gray-100 pt-3 flex flex-col gap-3">
-              <Link href="/dashboard" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.dashboard}</Link>
-              <Link href="/matches" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myMatches}</Link>
-              <Link href={`/profile/${user?.id}`} className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.myProfile}</Link>
+            <div className="pt-3 flex flex-col gap-3" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+              <Link href="/dashboard" className="text-sm font-medium" style={{ color: '#A6B0CC' }} onClick={() => setMenuOpen(false)}>{t.dashboard}</Link>
+              <Link href="/matches" className="text-sm font-medium" style={{ color: '#A6B0CC' }} onClick={() => setMenuOpen(false)}>Conversations</Link>
+              <Link href={`/profile/${user?.id}`} className="text-sm font-medium" style={{ color: '#A6B0CC' }} onClick={() => setMenuOpen(false)}>{t.myProfile}</Link>
               {isVerified ? (
-                <span className="text-sm font-semibold" style={{color: '#2EBD7A'}}>✓ {t.verified || 'Verified'}</span>
+                <span className="text-sm font-semibold" style={{ color: '#2EBD7A' }}>✓ {t.verified || 'Verified'}</span>
               ) : (
-                <Link href="/verify" className="text-sm font-medium" style={{color: '#E07B29'}} onClick={() => setMenuOpen(false)}>{t.getVerified}</Link>
+                <Link href="/verify" className="text-sm font-medium" style={{ color: '#E07B29' }} onClick={() => setMenuOpen(false)}>{t.getVerified}</Link>
               )}
-              <button onClick={handleSignOut} className="text-sm font-semibold text-left text-red-500">{t.signOut}</button>
+              <button onClick={handleSignOut} className="text-sm font-semibold text-left" style={{ color: '#E04B4B' }}>{t.signOut}</button>
             </div>
           ) : (
             <>
-              <Link href="/auth" className="text-sm font-medium text-gray-700" onClick={() => setMenuOpen(false)}>{t.signIn}</Link>
+              <Link href="/auth" className="text-sm font-medium" style={{ color: '#A6B0CC' }} onClick={() => setMenuOpen(false)}>{t.signIn}</Link>
               <Link href="/auth?tab=signup"
-                className="text-sm font-semibold text-white px-4 py-2 rounded-lg text-center"
-                style={{background: '#1A2744'}} onClick={() => setMenuOpen(false)}>
+                className="text-sm font-semibold text-white px-4 py-2.5 rounded-lg text-center"
+                style={{ background: '#E07B29' }} onClick={() => setMenuOpen(false)}>
                 {t.getStarted}
               </Link>
             </>

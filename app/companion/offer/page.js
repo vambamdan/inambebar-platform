@@ -1,29 +1,56 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import { useLanguage } from '@/lib/LanguageContext';
-import { COUNTRIES, IRANIAN_CITIES } from '@/lib/translations';
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
+import { useLanguage } from '@/lib/LanguageContext'
+import { COUNTRIES, IRANIAN_CITIES } from '@/lib/translations'
+
+const CARD_BG  = '#16203A'
+const HAIRLINE = 'rgba(255,255,255,0.07)'
+const FG1      = '#F1F4FB'
+const FG2      = '#A6B0CC'
+const FG3      = '#6E7A99'
+
+const inputStyle = {
+  background: '#0F1730',
+  border: `1px solid ${HAIRLINE}`,
+  color: FG1,
+}
+const labelStyle = {
+  color: FG3,
+  fontSize: '0.7rem',
+  fontWeight: 700,
+  textTransform: 'uppercase',
+  letterSpacing: '0.07em',
+  display: 'block',
+  marginBottom: '6px',
+}
 
 export default function CompanionOfferPage() {
-  const { isFa } = useLanguage();
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { isFa } = useLanguage()
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [form, setForm] = useState({
     origin_city: '', origin_country: '', destination_city: '',
     travel_date: '', return_date: '', languages: '', services: '', bio: '', price: '',
-  });
+  })
 
-  function handleChange(e) { setForm({ ...form, [e.target.name]: e.target.value }); }
+  const fontStyle = isFa ? { fontFamily: "'Vazirmatn', sans-serif" } : {}
+
+  function handleChange(e) { setForm({ ...form, [e.target.name]: e.target.value }) }
+  function focusBorder(e) { e.target.style.borderColor = 'rgba(224,123,41,0.40)' }
+  function blurBorder(e)  { e.target.style.borderColor = HAIRLINE }
 
   async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { router.push('/auth?redirect=/companion/offer'); return; }
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { router.push('/auth?redirect=/companion/offer'); return }
     const { error: err } = await supabase.from('companion_offers').insert({
       traveler_id: user.id,
       origin_city: form.origin_city, origin_country: form.origin_country,
@@ -31,105 +58,157 @@ export default function CompanionOfferPage() {
       travel_date: form.travel_date, return_date: form.return_date || null,
       languages: form.languages, services: form.services, bio: form.bio,
       price: form.price ? parseFloat(form.price) : null,
-    });
-    if (err) { setError(err.message); setLoading(false); }
-    else { router.push('/companion?tab=offers'); }
+    })
+    if (err) { setError(err.message); setLoading(false) }
+    else { router.push('/companion?tab=offers') }
   }
 
   const svcOptions = [
-    { key: 'airport', en: 'Airport pickup/drop-off', fa: 'رفت‌وآمد فرودگاهی' },
-    { key: 'customs', en: 'Customs guidance', fa: 'راهنمایی گمرک' },
-    { key: 'translation', en: 'Translation help', fa: 'کمک ترجمه' },
-    { key: 'errands', en: 'Local errands', fa: 'کارهای محلی' },
-    { key: 'packages', en: 'Carry packages', fa: 'حمل بسته' },
-    { key: 'navigation', en: 'City navigation', fa: 'راهنمای شهری' },
-  ];
+    { key: 'airport',     en: 'Airport pickup/drop-off', fa: 'رفت‌وآمد فرودگاهی' },
+    { key: 'customs',     en: 'Customs guidance',         fa: 'راهنمایی گمرک' },
+    { key: 'translation', en: 'Translation help',         fa: 'کمک ترجمه' },
+    { key: 'errands',     en: 'Local errands',            fa: 'کارهای محلی' },
+    { key: 'packages',    en: 'Carry packages',           fa: 'حمل بسته' },
+    { key: 'navigation',  en: 'City navigation',          fa: 'راهنمای شهری' },
+  ]
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+    <div className="min-h-screen" style={{ background: '#0B1220', paddingTop: 72 }}>
+    <div className="max-w-2xl mx-auto px-4 py-10" style={fontStyle}>
+
+      <Link href="/companion" className="inline-flex items-center gap-1.5 text-sm mb-8 transition-colors"
+        style={{ color: FG3 }}
+        onMouseEnter={e => e.currentTarget.style.color = FG2}
+        onMouseLeave={e => e.currentTarget.style.color = FG3}>
+        <ArrowLeft size={15} /> {isFa ? 'بازگشت' : 'Back to Companion'}
+      </Link>
+
+      <div className="mb-8">
+        <h1 className="text-3xl font-black mb-2" style={{ color: FG1, letterSpacing: '-0.025em' }}>
           {isFa ? 'ارائه همراه سفر' : 'Offer Travel Companionship'}
         </h1>
-        <p className="text-gray-500 mb-8">
-          {isFa ? 'اگر به ایران سفر می‌کنید و می‌خواهید به دیگران کمک کنید، اطلاعات خود را وارد کنید.'
+        <p className="text-sm" style={{ color: FG3 }}>
+          {isFa
+            ? 'اگر به ایران سفر می‌کنید و می‌خواهید به دیگران کمک کنید، اطلاعات خود را وارد کنید.'
             : 'Traveling to Iran? Help others navigate airports, customs, and more.'}
         </p>
-        {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6">{error}</div>}
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 space-y-6">
+      </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{isFa ? 'شهر مبدأ' : 'Origin City'} *</label>
-              <input name="origin_city" required value={form.origin_city} onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder={isFa ? 'مثلاً تورنتو' : 'e.g. Toronto'} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{isFa ? 'کشور مبدأ' : 'Origin Country'} *</label>
-              <select name="origin_country" required value={form.origin_country} onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <option value="">{isFa ? 'انتخاب کنید' : 'Select country'}</option>
-                {COUNTRIES.map((c) => <option key={c.code} value={isFa ? c.fa : c.en}>{isFa ? c.fa : c.en}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{isFa ? 'شهر مقصد در ایران' : 'Destination in Iran'} *</label>
-              <select name="destination_city" required value={form.destination_city} onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <option value="">{isFa ? 'انتخاب کنید' : 'Select city'}</option>
-                {IRANIAN_CITIES.map((city) => <option key={city.en} value={isFa ? city.fa : city.en}>{isFa ? city.fa : city.en}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{isFa ? 'تاریخ سفر' : 'Travel Date'} *</label>
-              <input type="date" name="travel_date" required value={form.travel_date} onChange={handleChange}
-                min={new Date().toISOString().split('T')[0]}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            </div>
+      {error && (
+        <div className="rounded-xl px-4 py-3 mb-6 text-sm"
+          style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: '#FCA5A5' }}>
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="rounded-2xl p-8 space-y-6"
+        style={{ background: CARD_BG, border: `1px solid ${HAIRLINE}` }}>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label style={labelStyle}>{isFa ? 'شهر مبدأ' : 'Origin City'} *</label>
+            <input name="origin_city" required value={form.origin_city} onChange={handleChange}
+              className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+              style={inputStyle} onFocus={focusBorder} onBlur={blurBorder}
+              placeholder={isFa ? 'مثلاً تورنتو' : 'e.g. Toronto'} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{isFa ? 'زبان‌هایی که صحبت می‌کنید' : 'Languages You Speak'} *</label>
-            <input name="languages" required value={form.languages} onChange={handleChange}
-              placeholder={isFa ? 'مثلاً: فارسی، انگلیسی' : 'e.g. Persian, English'}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            <label style={labelStyle}>{isFa ? 'کشور مبدأ' : 'Origin Country'} *</label>
+            <select name="origin_country" required value={form.origin_country} onChange={handleChange}
+              className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+              style={inputStyle} onFocus={focusBorder} onBlur={blurBorder}>
+              <option value="">{isFa ? 'انتخاب کنید' : 'Select country'}</option>
+              {COUNTRIES.map((c) => <option key={c.code} value={isFa ? c.fa : c.en}>{isFa ? c.fa : c.en}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label style={labelStyle}>{isFa ? 'شهر مقصد در ایران' : 'Destination in Iran'} *</label>
+            <select name="destination_city" required value={form.destination_city} onChange={handleChange}
+              className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+              style={inputStyle} onFocus={focusBorder} onBlur={blurBorder}>
+              <option value="">{isFa ? 'انتخاب کنید' : 'Select city'}</option>
+              {IRANIAN_CITIES.map((city) => <option key={city.en} value={isFa ? city.fa : city.en}>{isFa ? city.fa : city.en}</option>)}
+            </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{isFa ? 'خدماتی که ارائه می‌دهید' : 'Services You Offer'}</label>
-            <div className="grid grid-cols-2 gap-2">
-              {svcOptions.map((svc) => (
-                <label key={svc.key} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                  <input type="checkbox" value={isFa ? svc.fa : svc.en} className="rounded"
+            <label style={labelStyle}>{isFa ? 'تاریخ سفر' : 'Travel Date'} *</label>
+            <input type="date" name="travel_date" required value={form.travel_date} onChange={handleChange}
+              min={new Date().toISOString().split('T')[0]}
+              className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+              style={inputStyle} onFocus={focusBorder} onBlur={blurBorder} />
+          </div>
+        </div>
+
+        <div>
+          <label style={labelStyle}>{isFa ? 'زبان‌هایی که صحبت می‌کنید' : 'Languages You Speak'} *</label>
+          <input name="languages" required value={form.languages} onChange={handleChange}
+            placeholder={isFa ? 'مثلاً: فارسی، انگلیسی' : 'e.g. Persian, English'}
+            className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+            style={inputStyle} onFocus={focusBorder} onBlur={blurBorder} />
+        </div>
+
+        <div>
+          <label style={labelStyle}>{isFa ? 'خدماتی که ارائه می‌دهید' : 'Services You Offer'}</label>
+          <div className="grid grid-cols-2 gap-2 mt-2">
+            {svcOptions.map((svc) => {
+              const val = isFa ? svc.fa : svc.en
+              const curr = form.services ? form.services.split(', ') : []
+              const checked = curr.includes(val)
+              return (
+                <label key={svc.key}
+                  className="flex items-center gap-2.5 text-sm cursor-pointer px-3 py-2 rounded-xl transition-colors"
+                  style={{
+                    background: checked ? 'rgba(224,123,41,0.08)' : 'rgba(255,255,255,0.02)',
+                    border: `1px solid ${checked ? 'rgba(224,123,41,0.30)' : HAIRLINE}`,
+                    color: checked ? '#E07B29' : FG2,
+                  }}>
+                  <input type="checkbox" value={val} checked={checked} className="rounded"
+                    style={{ accentColor: '#E07B29' }}
                     onChange={(e) => {
-                      const curr = form.services ? form.services.split(', ') : [];
-                      const val = e.target.value;
-                      setForm({ ...form, services: e.target.checked ? [...curr, val].join(', ') : curr.filter(s => s !== val).join(', ') });
+                      const newCurr = form.services ? form.services.split(', ') : []
+                      setForm({ ...form, services: e.target.checked
+                        ? [...newCurr, val].join(', ')
+                        : newCurr.filter(s => s !== val).join(', ') })
                     }} />
                   {isFa ? svc.fa : svc.en}
                 </label>
-              ))}
-            </div>
+              )
+            })}
           </div>
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{isFa ? 'معرفی خودتان' : 'About You'}</label>
-            <textarea name="bio" rows={3} value={form.bio} onChange={handleChange}
-              placeholder={isFa ? 'کمی درباره خود و تجربه‌تان بنویسید...' : 'Tell senders about yourself and your experience...'}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{isFa ? 'قیمت پیشنهادی ($، اختیاری)' : 'Suggested Price (USD, optional)'}</label>
-            <input type="number" name="price" value={form.price} onChange={handleChange} min="0" step="5" placeholder="0"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            <p className="text-xs text-gray-400 mt-1">{isFa ? 'می‌توانید به‌صورت رایگان هم ارائه دهید' : 'You can offer this for free too'}</p>
-          </div>
-          <button type="submit" disabled={loading} className="w-full py-3 rounded-lg font-semibold text-white transition" style={{ backgroundColor: '#1e3a5f' }}>
-            {loading ? (isFa ? 'در حال ثبت...' : 'Posting...') : (isFa ? 'ثبت پیشنهاد' : 'Post Offer')}
-          </button>
-        </form>
-      </div>
+        <div>
+          <label style={labelStyle}>{isFa ? 'معرفی خودتان' : 'About You'}</label>
+          <textarea name="bio" rows={3} value={form.bio} onChange={handleChange}
+            placeholder={isFa ? 'کمی درباره خود و تجربه‌تان بنویسید...' : 'Tell travelers about yourself and your experience...'}
+            className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none resize-none"
+            style={inputStyle} onFocus={focusBorder} onBlur={blurBorder} />
+        </div>
+
+        <div>
+          <label style={labelStyle}>
+            {isFa ? 'قیمت پیشنهادی ($، اختیاری)' : 'Suggested Price (USD, optional)'}
+          </label>
+          <input type="number" name="price" value={form.price} onChange={handleChange} min="0" step="5" placeholder="0"
+            className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+            style={inputStyle} onFocus={focusBorder} onBlur={blurBorder} />
+          <p className="text-xs mt-1.5" style={{ color: FG3 }}>
+            {isFa ? 'می‌توانید به‌صورت رایگان هم ارائه دهید' : 'You can offer this for free too'}
+          </p>
+        </div>
+
+        <button type="submit" disabled={loading}
+          className="w-full py-3.5 rounded-xl font-semibold text-white transition-opacity disabled:opacity-50 hover:opacity-90"
+          style={{ background: '#E07B29' }}>
+          {loading
+            ? (isFa ? 'در حال ثبت...' : 'Posting…')
+            : (isFa ? 'ثبت پیشنهاد' : 'Post Offer')}
+        </button>
+      </form>
     </div>
-  );
+    </div>
+  )
 }
