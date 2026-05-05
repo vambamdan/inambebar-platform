@@ -430,6 +430,7 @@ export default function MatchChat() {
   const st = STATUS_BADGE[match.status] || STATUS_BADGE.pending
 
   return (
+    <>
     <div className="flex flex-col h-full" style={{ ...fontStyle, background: '#0B1220' }}>
 
       {/* ══ Header ══ */}
@@ -893,5 +894,6 @@ export default function MatchChat() {
         </div>
       )}
     </ConfirmModal>
+    </>
   )
 }
