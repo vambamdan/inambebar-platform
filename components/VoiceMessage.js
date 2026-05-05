@@ -31,6 +31,7 @@ export default function VoiceMessage({ matchId, userId, onCancel, onSent }) {
   const [playing, setPlaying]     = useState(false)
   const [playElapsed, setPlayElapsed] = useState(0)
   const [audioDuration, setAudioDuration] = useState(0)
+  const [uploadError, setUploadError] = useState('')
 
   const mediaRef    = useRef(null)
   const chunksRef   = useRef([])
@@ -110,11 +111,16 @@ export default function VoiceMessage({ matchId, userId, onCancel, onSent }) {
   async function handleSend() {
     if (!blobRef.current) return
     setPhase('uploading')
+    setUploadError('')
     const path = `${matchId}/${userId}/${Date.now()}.webm`
     const { error } = await supabase.storage
       .from('chat-images')  // reuse same bucket, audio is small
       .upload(path, blobRef.current, { contentType: 'audio/webm' })
-    if (error) { setPhase('preview'); return }
+    if (error) {
+      setUploadError('Upload failed — ' + (error.message || 'please try again'))
+      setPhase('preview')
+      return
+    }
     const { data: { publicUrl } } = supabase.storage.from('chat-images').getPublicUrl(path)
     await supabase.from('messages').insert({
       match_id: matchId,
@@ -134,6 +140,7 @@ export default function VoiceMessage({ matchId, userId, onCancel, onSent }) {
     setAudioUrl(null)
     setPlaying(false)
     setPlayElapsed(0)
+    setUploadError('')
     blobRef.current = null
   }
 
@@ -191,6 +198,13 @@ export default function VoiceMessage({ matchId, userId, onCancel, onSent }) {
   if (phase === 'preview') {
     const prog = audioDuration > 0 ? (playElapsed / audioDuration) * 100 : 0
     return (
+      <div className="flex flex-col gap-2">
+        {uploadError && (
+          <p className="text-xs px-3 py-2 rounded-xl"
+            style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: '#FCA5A5' }}>
+            {uploadError}
+          </p>
+        )}
       <div className="flex items-center gap-3 rounded-2xl px-4 py-3"
         style={{ background: CARD_BG, border: `1px solid ${HAIRLINE}` }}>
         <button
@@ -223,6 +237,7 @@ export default function VoiceMessage({ matchId, userId, onCancel, onSent }) {
             <Send size={12} /> Send
           </button>
         </div>
+      </div>
       </div>
     )
   }
