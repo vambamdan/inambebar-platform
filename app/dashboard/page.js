@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Plane, Package, MessageCircle, ChevronRight, ShieldCheck, Bell, Smartphone, ArrowRight } from 'lucide-react'
@@ -21,7 +21,7 @@ const STATUS_STYLES = {
   cancelled:  { bg: 'rgba(255,255,255,0.06)', text: '#6E7A99', label: 'Cancelled'  },
 }
 
-export default function Dashboard() {
+function DashboardInner() {
   const [user, setUser]             = useState(null)
   const [profile, setProfile]       = useState(null)
   const [myTrips, setMyTrips]       = useState([])
@@ -428,5 +428,13 @@ export default function Dashboard() {
 
     </div>
     </div>
+  )
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center" style={{ background: '#0B1220' }}><span style={{ color: '#6E7A99', fontSize: '0.875rem' }}>Loading…</span></div>}>
+      <DashboardInner />
+    </Suspense>
   )
 }
