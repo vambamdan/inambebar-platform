@@ -297,9 +297,12 @@ export default function MatchChat() {
       .from('chat-images')
       .upload(path, file, { contentType: file.type })
     if (uploadError) { setImageUploading(false); return }
-    const { data: { publicUrl } } = supabase.storage.from('chat-images').getPublicUrl(path)
+    const { data: signedData, error: signErr } = await supabase.storage
+      .from('chat-images')
+      .createSignedUrl(path, 365 * 24 * 3600)
+    if (signErr || !signedData?.signedUrl) { setImageUploading(false); return }
     await supabase.from('messages').insert({
-      match_id: id, sender_id: user.id, content: '📷 Photo', image_url: publicUrl,
+      match_id: id, sender_id: user.id, content: '📷 Photo', image_url: signedData.signedUrl,
     })
     if (fileInputRef.current) fileInputRef.current.value = ''
     setImageUploading(false)

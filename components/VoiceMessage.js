@@ -121,12 +121,19 @@ export default function VoiceMessage({ matchId, userId, onCancel, onSent }) {
       setPhase('preview')
       return
     }
-    const { data: { publicUrl } } = supabase.storage.from('chat-images').getPublicUrl(path)
+    const { data: signedData, error: signErr } = await supabase.storage
+      .from('chat-images')
+      .createSignedUrl(path, 365 * 24 * 3600)
+    if (signErr || !signedData?.signedUrl) {
+      setUploadError('Could not generate secure URL — please try again')
+      setPhase('preview')
+      return
+    }
     await supabase.from('messages').insert({
       match_id: matchId,
       sender_id: userId,
       content: '🎤 Voice message',
-      image_url: publicUrl,   // repurpose image_url for audio too; we detect by content
+      image_url: signedData.signedUrl,   // repurpose image_url for audio too; we detect by content
     })
     onSent?.()
   }
