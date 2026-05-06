@@ -120,7 +120,7 @@ export default function Home() {
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at 72% 55%, rgba(224,123,41,0.10) 0%, transparent 45%)' }} />
 
-        <div className="px-6 lg:px-12 py-16 w-full">
+        <div className="px-6 lg:px-12 py-16 w-full" style={{ position: 'relative', zIndex: 1 }}>
           <div className="grid md:grid-cols-2 gap-12 items-center max-w-screen-2xl mx-auto">
 
             {/* LEFT */}
@@ -275,7 +275,7 @@ export default function Home() {
         </div>
 
         <div className="absolute bottom-3 right-4 pointer-events-none"
-          style={{ color: 'rgba(255,255,255,0.20)', fontSize: '10px', letterSpacing: '0.03em' }}>
+          style={{ color: 'rgba(255,255,255,0.20)', fontSize: '10px', letterSpacing: '0.03em', zIndex: 2 }}>
           Photo: Hasan Almasi / Unsplash
         </div>
       </div>
