@@ -76,7 +76,7 @@ export default function Navbar() {
         ...fontStyle,
       }}
     >
-      <div className="max-w-7xl mx-auto px-8 h-full flex items-center gap-8">
+      <div className="px-5 lg:px-8 h-full flex items-center gap-8 w-full">
 
         {/* Logo */}
         <Link href="/" className="flex-shrink-0 transition-opacity hover:opacity-80">
