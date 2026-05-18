@@ -300,15 +300,13 @@ export default function MatchChat() {
     if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5MB'); return }
     setImageUploading(true)
     const form = new FormData()
-    form.append('file',    file)
-    form.append('matchId', id)
-    form.append('userId',  user.id)
+    form.append('file',          file)
+    form.append('matchId',       id)
+    form.append('userId',        user.id)
+    form.append('insertMessage', 'true')
     const res = await fetch('/api/upload-chat-file', { method: 'POST', body: form })
-    const { url, error: uploadErr } = await res.json()
-    if (uploadErr || !url) { setImageUploading(false); return }
-    await supabase.from('messages').insert({
-      match_id: id, sender_id: user.id, content: '📷 Photo', image_url: url,
-    })
+    const { error: uploadErr } = await res.json()
+    if (uploadErr) { setImageUploading(false); return }
     if (fileInputRef.current) fileInputRef.current.value = ''
     setImageUploading(false)
   }
@@ -378,22 +376,15 @@ export default function MatchChat() {
       }
 
       const form = new FormData()
-      form.append('file',    new File([blob], 'voice.webm', { type: 'audio/webm' }))
-      form.append('matchId', id)
-      form.append('userId',  user.id)
+      form.append('file',          new File([blob], 'voice.webm', { type: 'audio/webm' }))
+      form.append('matchId',       id)
+      form.append('userId',        user.id)
+      form.append('insertMessage', 'true')
 
       const res = await fetch('/api/upload-chat-file', { method: 'POST', body: form })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const { url, error: uploadErr } = await res.json()
-
-      if (uploadErr || !url) throw new Error(uploadErr || 'No URL returned')
-
-      const { error: insertErr } = await supabase.from('messages').insert({
-        match_id: id, sender_id: user.id,
-        content:  '🎤 Voice message',
-        image_url: url,
-      })
-      if (insertErr) throw new Error(insertErr.message)
+      const { error: uploadErr } = await res.json()
+      if (uploadErr) throw new Error(uploadErr)
 
     } catch (err) {
       console.error('[voice send]', err)

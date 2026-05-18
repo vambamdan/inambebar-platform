@@ -9,16 +9,18 @@ export const runtime = 'nodejs'
  *   file     — the File/Blob to upload
  *   matchId  — UUID
  *   userId   — UUID
- * Returns { url } on success or { error } on failure.
+ *   insertMessage — 'true' to also insert the message row server-side (bypasses RLS)
+ * Returns { url, messageId? } on success or { error } on failure.
  *
- * Uses the admin client so Supabase Storage RLS is bypassed.
+ * Uses the admin client so Supabase Storage RLS is bypassed entirely.
  */
 export async function POST(req) {
   try {
-    const form     = await req.formData()
-    const file     = form.get('file')
-    const matchId  = form.get('matchId')
-    const userId   = form.get('userId')
+    const form          = await req.formData()
+    const file          = form.get('file')
+    const matchId       = form.get('matchId')
+    const userId        = form.get('userId')
+    const insertMessage = form.get('insertMessage') === 'true'
 
     if (!file || !matchId || !userId) {
       return NextResponse.json({ error: 'Missing file, matchId or userId' }, { status: 400 })
@@ -53,7 +55,26 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Could not generate signed URL' }, { status: 500 })
     }
 
-    return NextResponse.json({ url: signed.signedUrl })
+    const url = signed.signedUrl
+
+    // Optionally insert the message row server-side using admin (bypasses RLS)
+    if (insertMessage) {
+      const content = isAudio ? '🎤 Voice message' : '📷 Photo'
+      const { data: msg, error: insertErr } = await admin
+        .from('messages')
+        .insert({ match_id: matchId, sender_id: userId, content, image_url: url })
+        .select('id')
+        .single()
+
+      if (insertErr) {
+        console.error('[upload-chat-file] message insert error:', insertErr)
+        return NextResponse.json({ error: 'Upload succeeded but message failed: ' + insertErr.message }, { status: 500 })
+      }
+
+      return NextResponse.json({ url, messageId: msg.id })
+    }
+
+    return NextResponse.json({ url })
   } catch (err) {
     console.error('[upload-chat-file] unexpected:', err)
     return NextResponse.json({ error: String(err) }, { status: 500 })
