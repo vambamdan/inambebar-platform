@@ -13,6 +13,15 @@ export default function Terms() {
 
       <h1 className="text-3xl font-black mb-2" style={{ color: FG1, letterSpacing: '-0.025em' }}>Terms of Service</h1>
       <p className="text-sm mb-2" style={{ color: FG3 }}>Last updated: April 2026</p>
+
+      {/* Trilingual legal notice */}
+      <div className="rounded-xl px-4 py-3 mb-6 text-xs leading-relaxed"
+        style={{ background: 'rgba(224,123,41,0.06)', border: '1px solid rgba(224,123,41,0.18)', color: '#F5B380' }}>
+        <p className="mb-1">This legal document is available in English only. The English version is the legally binding version.</p>
+        <p className="mb-1" dir="rtl" style={{ fontFamily: "'Vazirmatn', sans-serif" }}>این سند قانونی فقط به زبان انگلیسی در دسترس است. نسخه انگلیسی از نظر قانونی الزام‌آور است.</p>
+        <p>Bu hukuki belge yalnızca İngilizce olarak mevcuttur. İngilizce sürüm yasal olarak bağlayıcıdır.</p>
+      </div>
+
       <p className="text-sm mb-10 leading-relaxed" style={{ color: FG3 }}>
         By creating an account on Inambebar you agree to these terms in full. If you do not agree, do not use the platform.
       </p>

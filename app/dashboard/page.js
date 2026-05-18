@@ -229,8 +229,8 @@ function DashboardInner() {
                             : trip.status === 'full'
                             ? { background: 'rgba(224,123,41,0.10)', color: '#E07B29' }
                             : { background: 'rgba(255,255,255,0.05)', color: FG3 }}>
-                          {trip.status === 'active' ? (isFa ? 'فعال' : 'Active')
-                           : trip.status === 'full' ? (isFa ? 'پر' : 'Full')
+                          {trip.status === 'active' ? (t?.statusActive || 'Active')
+                           : trip.status === 'full' ? (t?.statusFull || 'Full')
                            : trip.status}
                         </span>
                         <ChevronRight size={15} style={{ color: FG3 }} />
@@ -282,7 +282,7 @@ function DashboardInner() {
                       style={req.status === 'open'
                         ? { background: 'rgba(46,189,122,0.10)', color: '#56CD93' }
                         : { background: 'rgba(255,255,255,0.05)', color: FG3 }}>
-                      {req.status === 'open' ? (isFa ? 'باز' : 'Open') : req.status}
+                      {req.status === 'open' ? (t?.statusOpen || 'Open') : req.status}
                     </span>
                     <ChevronRight size={15} style={{ color: FG3 }} />
                   </div>

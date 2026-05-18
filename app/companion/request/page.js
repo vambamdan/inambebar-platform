@@ -30,7 +30,7 @@ const labelStyle = {
 }
 
 export default function CompanionRequestPage() {
-  const { isFa } = useLanguage()
+  const { t, isFa } = useLanguage()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -64,12 +64,12 @@ export default function CompanionRequestPage() {
   }
 
   const needsOptions = [
-    { key: 'airport',     en: 'Airport pickup/drop-off', fa: 'رفت‌وآمد فرودگاهی' },
-    { key: 'customs',     en: 'Customs guidance',         fa: 'راهنمایی گمرک' },
-    { key: 'translation', en: 'Translation help',         fa: 'کمک ترجمه' },
-    { key: 'errands',     en: 'Local errands',            fa: 'کارهای محلی' },
-    { key: 'packages',    en: 'Carry packages',           fa: 'حمل بسته' },
-    { key: 'navigation',  en: 'City navigation',          fa: 'راهنمای شهری' },
+    { key: 'airport',     en: 'Airport pickup/drop-off', fa: 'رفت‌وآمد فرودگاهی', tr: 'Havalimanı transfer' },
+    { key: 'customs',     en: 'Customs guidance',         fa: 'راهنمایی گمرک',      tr: 'Gümrük rehberliği' },
+    { key: 'translation', en: 'Translation help',         fa: 'کمک ترجمه',          tr: 'Tercüme yardımı' },
+    { key: 'errands',     en: 'Local errands',            fa: 'کارهای محلی',         tr: 'Yerel işler' },
+    { key: 'packages',    en: 'Carry packages',           fa: 'حمل بسته',            tr: 'Paket taşıma' },
+    { key: 'navigation',  en: 'City navigation',          fa: 'راهنمای شهری',        tr: 'Şehir rehberliği' },
   ]
 
   return (
@@ -80,17 +80,15 @@ export default function CompanionRequestPage() {
         style={{ color: FG3 }}
         onMouseEnter={e => e.currentTarget.style.color = FG2}
         onMouseLeave={e => e.currentTarget.style.color = FG3}>
-        <ArrowLeft size={15} /> {isFa ? 'بازگشت' : 'Back to Companion'}
+        <ArrowLeft size={15} /> {t?.companionBackBtn || 'Back to Companion'}
       </Link>
 
       <div className="mb-8">
         <h1 className="text-3xl font-black mb-2" style={{ color: FG1, letterSpacing: '-0.025em' }}>
-          {isFa ? 'درخواست همراه سفر' : 'Request a Travel Companion'}
+          {t?.companionRequestPageTitle || 'Request a Travel Companion'}
         </h1>
         <p className="text-sm" style={{ color: FG3 }}>
-          {isFa
-            ? 'به کمک نیاز دارید؟ درخواست خود را ثبت کنید تا مسافران با تجربه با شما تماس بگیرند.'
-            : 'Need help with your trip to Iran? Post your request and experienced travelers will reach out.'}
+          {t?.companionWhatIsDesc || 'Need help with your trip to Iran? Post your request and experienced travelers will reach out.'}
         </p>
       </div>
 
@@ -106,37 +104,37 @@ export default function CompanionRequestPage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label style={labelStyle}>{isFa ? 'شهر شما' : 'Your City'} *</label>
+            <label style={labelStyle}>{t?.companionYourCity || 'Your City'} *</label>
             <input name="origin_city" required value={form.origin_city} onChange={handleChange}
               className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
               style={inputStyle} onFocus={focusBorder} onBlur={blurBorder}
-              placeholder={isFa ? 'مثلاً ونکوور' : 'e.g. Vancouver'} />
+              placeholder={t?.companionYourCityPh || 'e.g. Vancouver'} />
           </div>
           <div>
-            <label style={labelStyle}>{isFa ? 'کشور شما' : 'Your Country'} *</label>
+            <label style={labelStyle}>{t?.companionYourCountry || 'Your Country'} *</label>
             <select name="origin_country" required value={form.origin_country} onChange={handleChange}
               className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
               style={inputStyle} onFocus={focusBorder} onBlur={blurBorder}>
-              <option value="">{isFa ? 'انتخاب کنید' : 'Select country'}</option>
-              {COUNTRIES.map((c) => <option key={c.code} value={isFa ? c.fa : c.en}>{isFa ? c.fa : c.en}</option>)}
+              <option value="">{t?.companionSelectCountry || 'Select country'}</option>
+              {COUNTRIES.map((c) => <option key={c.en} value={isFa ? c.fa : c.en}>{isFa ? c.fa : c.en}</option>)}
             </select>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label style={labelStyle}>{isFa ? 'شهر مقصد در ایران' : 'Destination in Iran'} *</label>
+            <label style={labelStyle}>{t?.companionDestIran || 'Destination in Iran'} *</label>
             <select name="destination_city" required value={form.destination_city} onChange={handleChange}
               className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
               style={inputStyle} onFocus={focusBorder} onBlur={blurBorder}>
-              <option value="">{isFa ? 'انتخاب کنید' : 'Select city'}</option>
+              <option value="">{t?.companionSelectCity || 'Select city'}</option>
               {IRANIAN_CITIES.map((city) => <option key={city.en} value={isFa ? city.fa : city.en}>{isFa ? city.fa : city.en}</option>)}
             </select>
           </div>
           <div>
             <label style={labelStyle}>
-              {isFa ? 'تاریخ نیاز' : 'Needed By'}{' '}
-              <span style={{ textTransform: 'none', fontWeight: 400 }}>({isFa ? 'اختیاری' : 'optional'})</span>
+              {t?.companionNeededBy || 'Needed By'}{' '}
+              <span style={{ textTransform: 'none', fontWeight: 400 }}>({t?.optional || 'optional'})</span>
             </label>
             <input type="date" name="needed_by_date" value={form.needed_by_date} onChange={handleChange}
               min={new Date().toISOString().split('T')[0]}
@@ -146,12 +144,11 @@ export default function CompanionRequestPage() {
         </div>
 
         <div>
-          <label style={labelStyle}>{isFa ? 'به چه کمکی نیاز دارید؟' : 'What kind of help do you need?'}</label>
+          <label style={labelStyle}>{t?.companionHelpNeeded || 'What kind of help do you need?'}</label>
           <div className="grid grid-cols-2 gap-2 mt-2">
             {needsOptions.map((opt) => {
-              const val = isFa ? opt.fa : opt.en
               const curr = form.needs ? form.needs.split(', ') : []
-              const checked = curr.includes(val)
+              const checked = curr.includes(opt.key)
               return (
                 <label key={opt.key}
                   className="flex items-center gap-2.5 text-sm cursor-pointer px-3 py-2 rounded-xl transition-colors"
@@ -160,13 +157,13 @@ export default function CompanionRequestPage() {
                     border: `1px solid ${checked ? 'rgba(224,123,41,0.30)' : HAIRLINE}`,
                     color: checked ? '#E07B29' : FG2,
                   }}>
-                  <input type="checkbox" value={val} checked={checked} className="rounded"
+                  <input type="checkbox" value={opt.key} checked={checked} className="rounded"
                     style={{ accentColor: '#E07B29' }}
                     onChange={(e) => {
                       const newCurr = form.needs ? form.needs.split(', ') : []
                       setForm({ ...form, needs: e.target.checked
-                        ? [...newCurr, val].join(', ')
-                        : newCurr.filter(s => s !== val).join(', ') })
+                        ? [...newCurr, opt.key].join(', ')
+                        : newCurr.filter(s => s !== opt.key).join(', ') })
                     }} />
                   {isFa ? opt.fa : opt.en}
                 </label>
@@ -176,7 +173,7 @@ export default function CompanionRequestPage() {
         </div>
 
         <div>
-          <label style={labelStyle}>{isFa ? 'توضیحات بیشتر' : 'Additional Details'}</label>
+          <label style={labelStyle}>{t?.companionAdditional || 'Additional Details'}</label>
           <textarea name="details" rows={4} value={form.details} onChange={handleChange}
             placeholder={isFa
               ? 'هر اطلاعات مفیدی را بنویسید: تعداد چمدان، شماره پرواز...'
@@ -187,7 +184,7 @@ export default function CompanionRequestPage() {
 
         <div>
           <label style={labelStyle}>
-            {isFa ? 'بودجه پیشنهادی ($، اختیاری)' : 'Budget (USD, optional)'}
+            {t?.companionBudget || 'Budget (USD, optional)'}
           </label>
           <input type="number" name="budget" value={form.budget} onChange={handleChange} min="0" step="5" placeholder="0"
             className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
@@ -198,8 +195,8 @@ export default function CompanionRequestPage() {
           className="w-full py-3.5 rounded-xl font-semibold text-white transition-opacity disabled:opacity-50 hover:opacity-90"
           style={{ background: '#E07B29' }}>
           {loading
-            ? (isFa ? 'در حال ثبت...' : 'Posting…')
-            : (isFa ? 'ثبت درخواست' : 'Post Request')}
+            ? (t?.companionPosting || 'Posting…')
+            : (t?.companionPostRequestBtn || 'Post Request')}
         </button>
       </form>
     </div>

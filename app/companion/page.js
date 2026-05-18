@@ -12,7 +12,7 @@ const FG2      = '#A6B0CC'
 const FG3      = '#6E7A99'
 
 export default function CompanionPage() {
-  const { isFa } = useLanguage()
+  const { t, isFa, lang } = useLanguage()
   const [companions, setCompanions] = useState([])
   const [requests,   setRequests]   = useState([])
   const [loading,    setLoading]    = useState(true)
@@ -58,12 +58,10 @@ export default function CompanionPage() {
         <div className="flex items-start justify-between mb-8 gap-4 flex-wrap">
           <div>
             <h1 className="text-2xl font-bold tracking-tight mb-1.5" style={{ color: FG1, letterSpacing: '-0.025em' }}>
-              {isFa ? 'همراه سفر' : 'Travel Companion'}
+              {t?.companionPageTitle || 'Travel Companion'}
             </h1>
             <p className="text-sm leading-relaxed max-w-md" style={{ color: FG3 }}>
-              {isFa
-                ? 'مسافرانی که می‌توانند همراه شما باشند یا نیاز به همراه دارند را پیدا کنید.'
-                : 'Find travelers who can accompany you, or offer to travel alongside someone who needs support.'}
+              {t?.companionWhatIsDesc || 'Connect with verified travelers who can assist elderly, disabled, or solo travelers through airports and transit.'}
             </p>
           </div>
           <div className="flex gap-2 flex-shrink-0">
@@ -71,13 +69,13 @@ export default function CompanionPage() {
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white font-semibold text-sm active:scale-95 transition-all"
               style={{ background: '#E07B29' }}>
               <Plus size={14} />
-              {isFa ? 'ارائه همراهی' : 'Offer Companionship'}
+              {t?.companionOfferCta || 'Offer Companionship'}
             </Link>
             <Link href="/companion/request"
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm active:scale-95 transition-all"
               style={{ color: FG2, background: 'rgba(255,255,255,0.05)', border: `1px solid ${HAIRLINE}` }}>
               <Plus size={14} />
-              {isFa ? 'درخواست همراه' : 'Request a Companion'}
+              {t?.companionRequestCta || 'Request a Companion'}
             </Link>
           </div>
         </div>
@@ -91,12 +89,10 @@ export default function CompanionPage() {
           </div>
           <div>
             <div className="font-semibold text-sm mb-1" style={{ color: '#56CD93' }}>
-              {isFa ? 'همراه سفر چیست؟' : 'What is Travel Companion?'}
+              {t?.companionWhatIs || 'What is Travel Companion?'}
             </div>
             <p className="text-sm leading-relaxed" style={{ color: FG2 }}>
-              {isFa
-                ? 'گاهی سفر به یک همراه نیاز دارد — یک بزرگسال مسن که اولین بار تنها پرواز می‌کند، یک دانشجو که به کمک نیاز دارد. این سرویس برای همین موارد است.'
-                : 'Sometimes travel requires a companion — an elderly parent flying alone, a student needing guidance, or someone who wants company on the journey. This service connects travelers making the same trip.'}
+              {t?.companionWhatIsDesc || 'Connect with verified travelers who can assist elderly, disabled, or solo travelers through airports and transit.'}
             </p>
           </div>
         </div>
@@ -104,13 +100,13 @@ export default function CompanionPage() {
         {/* ── Tabs ── */}
         <div className="flex mb-6" style={{ borderBottom: `1px solid ${HAIRLINE}` }}>
           {[
-            { key: 'offers',   en: 'Companion Offers',   fa: 'ارائه همراهی' },
-            { key: 'requests', en: 'Companion Requests',  fa: 'درخواست همراه' },
+            { key: 'offers',   label: t?.companionOfferTab   || 'Offers' },
+            { key: 'requests', label: t?.companionRequestTab || 'Requests' },
           ].map(tb => (
             <button key={tb.key} onClick={() => setTab(tb.key)}
               className="relative px-5 py-3 text-sm font-semibold transition-colors"
               style={{ color: tab === tb.key ? FG1 : FG3 }}>
-              {isFa ? tb.fa : tb.en}
+              {tb.label}
               {tab === tb.key && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-t-full"
                   style={{ background: '#E07B29' }} />
@@ -125,8 +121,8 @@ export default function CompanionPage() {
           style={{ background: CARD_BG, border: `1px solid ${HAIRLINE}` }}>
           <div className="grid md:grid-cols-3 gap-3">
             {[
-              { key: 'origin',      label: isFa ? 'از (شهر)' : 'From', ph: isFa ? 'مثلاً تهران'   : 'e.g. Tehran' },
-              { key: 'destination', label: isFa ? 'به (شهر)' : 'To',   ph: isFa ? 'مثلاً تورنتو' : 'e.g. Toronto' },
+              { key: 'origin',      label: t?.companionFrom || 'From', ph: t?.companionFromPh || 'e.g. Tehran' },
+              { key: 'destination', label: t?.companionTo   || 'To',   ph: t?.companionToPh   || 'e.g. Toronto' },
             ].map(({ key, label, ph }) => (
               <div key={key}>
                 <label className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: FG3, letterSpacing: '0.07em' }}>
@@ -144,7 +140,7 @@ export default function CompanionPage() {
                 className="flex-1 py-2.5 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 active:scale-95"
                 style={{ background: '#E07B29' }}>
                 <Search size={14} />
-                {isFa ? 'جستجو' : 'Search'}
+                {t?.companionSearchBtn || 'Search'}
               </button>
               {(filters.origin || filters.destination) && (
                 <button type="button"
@@ -181,26 +177,26 @@ export default function CompanionPage() {
               <Users size={28} style={{ color: FG2 }} strokeWidth={1.5} />
             </div>
             <h3 className="font-semibold text-lg mb-2" style={{ color: FG1 }}>
-              {isFa ? 'موردی یافت نشد' : 'Nothing found yet'}
+              {t?.companionNothingFound || 'Nothing found yet'}
             </h3>
             <p className="text-sm mb-6 max-w-xs mx-auto leading-relaxed" style={{ color: FG3 }}>
-              {isFa ? 'اولین نفری باشید که یک پیشنهاد یا درخواست ثبت می‌کند.' : 'Be the first to post an offer or request.'}
+              {t?.companionBeFirst || 'Be the first to post an offer or request.'}
             </p>
             <Link href={tab === 'offers' ? '/companion/offer' : '/companion/request'}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-semibold text-sm"
               style={{ background: '#E07B29' }}>
               <Plus size={14} />
-              {tab === 'offers' ? (isFa ? 'ارائه همراهی' : 'Offer Companionship') : (isFa ? 'درخواست همراه' : 'Request a Companion')}
+              {tab === 'offers' ? (t?.companionOfferCta || 'Offer Companionship') : (t?.companionRequestCta || 'Request a Companion')}
             </Link>
           </div>
         ) : (
           <>
             <p className="text-xs mb-4 font-medium" style={{ color: FG3 }}>
-              {items.length} {isFa ? 'مورد یافت شد' : `result${items.length !== 1 ? 's' : ''} found`}
+              {items.length} {t?.companionResultCount || 'results found'}
             </p>
             <div className="space-y-3">
               {items.map(item => {
-                const name    = item.profiles?.full_name || (isFa ? 'ناشناس' : 'Anonymous')
+                const name    = item.profiles?.full_name || (t?.anonymous || 'Anonymous')
                 const initial = name[0]?.toUpperCase() || '?'
                 return (
                   <div key={item.id} className="card-hover rounded-2xl overflow-hidden"
@@ -219,7 +215,7 @@ export default function CompanionPage() {
                                 <span className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full"
                                   style={{ background: 'rgba(46,189,122,0.10)', color: '#56CD93' }}>
                                   <ShieldCheck size={10} />
-                                  {isFa ? 'تأیید شده' : 'Verified'}
+                                  {t?.companionVerified || 'Verified'}
                                 </span>
                               )}
                             </div>
@@ -227,17 +223,17 @@ export default function CompanionPage() {
                               <div className="flex items-center gap-1 text-xs mt-0.5" style={{ color: FG3 }}>
                                 <Star size={10} color="#E07B29" fill="#E07B29" />
                                 <span>{item.profiles.rating_avg?.toFixed(1)}</span>
-                                <span>· {item.profiles.rating_count} {isFa ? 'نظر' : 'reviews'}</span>
+                                <span>· {item.profiles.rating_count} {t?.companionReviews || 'reviews'}</span>
                               </div>
                             ) : (
-                              <div className="text-xs mt-0.5" style={{ color: FG3 }}>{isFa ? 'جدید' : 'New member'}</div>
+                              <div className="text-xs mt-0.5" style={{ color: FG3 }}>{t?.companionNewMember || 'New member'}</div>
                             )}
                           </div>
                         </div>
                         {item.fee && (
                           <div className="text-right flex-shrink-0">
                             <div className="font-bold text-lg" style={{ color: '#E07B29', letterSpacing: '-0.015em' }}>${item.fee}</div>
-                            <div className="text-xs" style={{ color: FG3 }}>{isFa ? 'پیشنهاد' : 'offer'}</div>
+                            <div className="text-xs" style={{ color: FG3 }}>{t?.companionOfferLabel || 'offer'}</div>
                           </div>
                         )}
                       </div>
@@ -263,7 +259,7 @@ export default function CompanionPage() {
                           )}
                         </div>
                         <span className="flex items-center gap-1 text-xs font-semibold flex-shrink-0" style={{ color: '#E07B29' }}>
-                          {isFa ? 'مشاهده' : 'View'}
+                          {t?.companionViewBtn || 'View'}
                           <ArrowRight size={12} />
                         </span>
                       </div>

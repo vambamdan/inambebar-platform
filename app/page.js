@@ -24,82 +24,47 @@ const ROUTES = [
   { from: 'Tehran', to: 'Istanbul',  code: 'IKA→IST' },
 ]
 
-const ROLE_STEPS = {
-  sender: [
-    {
-      Icon: Package,
-      title: 'Post your package',
-      desc: 'Describe your item, route, weight, and when it needs to arrive. Senders browsing your request can reach out.',
-    },
-    {
-      Icon: MessageSquare,
-      title: 'Chat in-platform',
-      desc: 'Agree on price and details entirely inside Inambebar. Every message is logged for your protection.',
-    },
-    {
-      Icon: CheckCircle,
-      title: 'Confirm delivery',
-      desc: 'Pay into secure escrow. Funds are released only when your recipient confirms the handoff.',
-    },
-  ],
-  traveler: [
-    {
-      Icon: Plane,
-      title: 'Post your trip',
-      desc: 'Add your route, departure date, and how many kg of luggage space you have available.',
-    },
-    {
-      Icon: Search,
-      title: 'Accept a request',
-      desc: 'Browse package requests along your route. Accept the ones that fit your schedule and capacity.',
-    },
-    {
-      Icon: DollarSign,
-      title: 'Deliver & get paid',
-      desc: 'Hand over the package. Both parties confirm delivery and your payment is released instantly.',
-    },
-  ],
-}
-
-const WHY = [
-  {
-    Icon: ShieldCheck,
-    color: '#2EBD7A',
-    bg: 'rgba(46,189,122,0.08)',
-    border: 'rgba(46,189,122,0.18)',
-    title: 'Government ID verified',
-    desc: 'Every user goes through biometric identity verification via Didit before sending or carrying anything.',
-  },
-  {
-    Icon: Lock,
-    color: '#A78BF8',
-    bg: 'rgba(167,139,248,0.08)',
-    border: 'rgba(167,139,248,0.18)',
-    title: 'Escrow protection',
-    desc: 'Funds are held until delivery is confirmed by the recipient. No delivery, no payment — simple.',
-  },
-  {
-    Icon: MessageSquare,
-    color: '#E07B29',
-    bg: 'rgba(224,123,41,0.08)',
-    border: 'rgba(224,123,41,0.18)',
-    title: 'All coordination in-app',
-    desc: 'Every message, agreement, and photo is logged inside Inambebar for dispute resolution.',
-  },
-  {
-    Icon: Users,
-    color: '#56CD93',
-    bg: 'rgba(86,205,147,0.08)',
-    border: 'rgba(86,205,147,0.18)',
-    title: 'Built for the diaspora',
-    desc: 'Designed specifically for Tehran–Europe, Tehran–Canada, and other diaspora routes. EN, FA, TR supported.',
-  },
-]
-
 export default function Home() {
   const { t, isFa } = useLanguage()
   const fontStyle = isFa ? { fontFamily: "'Vazirmatn', sans-serif" } : {}
   const [role, setRole] = useState('sender')
+
+  const ROLE_STEPS = {
+    sender: [
+      { Icon: Package,      title: t?.senderStep1Title || 'Post your package',   desc: t?.senderStep1Desc || 'Describe your item, route, weight, and when it needs to arrive.' },
+      { Icon: MessageSquare,title: t?.senderStep2Title || 'Chat in-platform',    desc: t?.senderStep2Desc || 'Agree on price and details entirely inside Inambebar.' },
+      { Icon: CheckCircle,  title: t?.senderStep3Title || 'Confirm delivery',    desc: t?.senderStep3Desc || 'Pay into secure escrow. Funds released only when recipient confirms.' },
+    ],
+    traveler: [
+      { Icon: Plane,        title: t?.travelerStep1Title || 'Post your trip',     desc: t?.travelerStep1Desc || 'Add your route, departure date, and luggage space available.' },
+      { Icon: Search,       title: t?.travelerStep2Title || 'Accept a request',   desc: t?.travelerStep2Desc || 'Browse package requests along your route.' },
+      { Icon: DollarSign,   title: t?.travelerStep3Title || 'Deliver & get paid', desc: t?.travelerStep3Desc || 'Hand over the package and your payment is released instantly.' },
+    ],
+  }
+
+  const WHY = [
+    {
+      Icon: ShieldCheck, color: '#2EBD7A', bg: 'rgba(46,189,122,0.08)', border: 'rgba(46,189,122,0.18)',
+      title: t?.whyIdTitle    || 'Government ID verified',
+      desc:  t?.whyIdDesc     || 'Every user goes through biometric identity verification via Didit before sending or carrying anything.',
+    },
+    {
+      Icon: Lock, color: '#A78BF8', bg: 'rgba(167,139,248,0.08)', border: 'rgba(167,139,248,0.18)',
+      title: t?.whyEscrowTitle || 'Escrow protection',
+      desc:  t?.whyEscrowDesc  || 'Funds are held until delivery is confirmed by the recipient. No delivery, no payment — simple.',
+    },
+    {
+      Icon: MessageSquare, color: '#E07B29', bg: 'rgba(224,123,41,0.08)', border: 'rgba(224,123,41,0.18)',
+      title: t?.whyInAppTitle || 'All coordination in-app',
+      desc:  t?.whyInAppDesc  || 'Every message, agreement, and photo is logged inside Inambebar for dispute resolution.',
+    },
+    {
+      Icon: Users, color: '#56CD93', bg: 'rgba(86,205,147,0.08)', border: 'rgba(86,205,147,0.18)',
+      title: t?.whyDiasporaTitle || 'Built for the diaspora',
+      desc:  t?.whyDiasporaDesc  || 'Designed for Tehran–Europe, Tehran–Canada, and other diaspora routes. EN, FA, TR supported.',
+    },
+  ]
+
   const steps = ROLE_STEPS[role]
 
   return (
@@ -306,9 +271,9 @@ export default function Home() {
 
           {/* Header */}
           <div className="text-center mb-10">
-            <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: '#E07B29' }}>How it works</p>
-            <h2 className="text-3xl font-bold mb-3" style={{ color: FG1, letterSpacing: '-0.025em' }}>{t.howItWorks}</h2>
-            <p style={{ color: FG3, fontSize: 15 }}>Three steps, whether you&apos;re sending or carrying.</p>
+            <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: '#E07B29' }}>{t?.howItWorks || 'How it works'}</p>
+            <h2 className="text-3xl font-bold mb-3" style={{ color: FG1, letterSpacing: '-0.025em' }}>{t?.howItWorks || 'How it works'}</h2>
+            <p style={{ color: FG3, fontSize: 15 }}>{t?.howItWorksSubtitle || "Three steps, whether you're sending or carrying."}</p>
           </div>
 
           {/* Role toggle */}
@@ -316,8 +281,8 @@ export default function Home() {
             <div className="inline-flex p-1 rounded-2xl gap-1"
               style={{ background: '#111A2E', border: `1px solid ${HAIRLINE}` }}>
               {[
-                { key: 'sender',   label: '📦  I\'m sending a package' },
-                { key: 'traveler', label: '✈️  I\'m a traveler' },
+                { key: 'sender',   label: t?.howItWorksTabSender   || "📦  I'm sending a package" },
+                { key: 'traveler', label: t?.howItWorksTabTraveler || "✈️  I'm a traveler" },
               ].map(({ key, label }) => (
                 <button
                   key={key}
@@ -358,7 +323,7 @@ export default function Home() {
               href={role === 'sender' ? '/trips' : '/trips/new'}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
               style={{ background: '#E07B29' }}>
-              {role === 'sender' ? 'Find a traveler now' : 'Post your trip'} <ArrowRight size={14} />
+              {role === 'sender' ? (t?.howItWorksSenderCta || 'Find a traveler now') : (t?.howItWorksTravelerCta || 'Post your trip')} <ArrowRight size={14} />
             </Link>
           </div>
         </div>
@@ -368,8 +333,8 @@ export default function Home() {
       <div style={{ background: '#111A2E', borderTop: `1px solid ${HAIRLINE}`, borderBottom: `1px solid ${HAIRLINE}` }}>
         <div className="px-6 lg:px-12 py-20 max-w-screen-xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: '#E07B29' }}>Why Inambebar</p>
-            <h2 className="text-2xl font-bold" style={{ color: FG1, letterSpacing: '-0.025em' }}>Built differently. Built for trust.</h2>
+            <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: '#E07B29' }}>{t?.whyTitle || 'Why Inambebar'}</p>
+            <h2 className="text-2xl font-bold" style={{ color: FG1, letterSpacing: '-0.025em' }}>{t?.whySubtitle || 'Built differently. Built for trust.'}</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {WHY.map(({ Icon, color, bg, border, title, desc }) => (

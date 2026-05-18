@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { Star, ShieldCheck, ChevronLeft, CheckCircle2, Truck, XCircle, ImagePlus, Mic } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useLanguage } from '@/lib/LanguageContext'
-import VoiceMessage from '@/components/VoiceMessage'
 import ConfirmModal from '@/components/ConfirmModal'
 
 const CARD_BG  = '#16203A'
@@ -114,9 +113,18 @@ export default function MatchChat() {
   const [loading, setLoading]             = useState(true)
   const [imageUploading, setImageUploading] = useState(false)
   const [otherIsTyping, setOtherIsTyping] = useState(false)
-  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
   const [reactions, setReactions]       = useState({})
   const [pickerMsgId, setPickerMsgId]   = useState(null)
+
+  // Voice recording (Telegram-style inline)
+  const [isRecording,   setIsRecording]   = useState(false)
+  const [recElapsed,    setRecElapsed]    = useState(0)
+  const [sendingVoice,  setSendingVoice]  = useState(false)
+  const [voiceError,    setVoiceError]    = useState('')
+  const mediaRecRef   = useRef(null)
+  const chunksRef     = useRef([])
+  const audioBlobRef  = useRef(null)
+  const recTimerRef   = useRef(null)
 
   const longPressRef = useRef(null)
   const fileInputRef    = useRef(null)
@@ -291,21 +299,111 @@ export default function MatchChat() {
     if (!file || !user) return
     if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5MB'); return }
     setImageUploading(true)
-    const ext = file.name.split('.').pop()
-    const path = `${id}/${user.id}/${Date.now()}.${ext}`
-    const { error: uploadError } = await supabase.storage
-      .from('chat-images')
-      .upload(path, file, { contentType: file.type })
-    if (uploadError) { setImageUploading(false); return }
-    const { data: signedData, error: signErr } = await supabase.storage
-      .from('chat-images')
-      .createSignedUrl(path, 365 * 24 * 3600)
-    if (signErr || !signedData?.signedUrl) { setImageUploading(false); return }
+    const form = new FormData()
+    form.append('file',    file)
+    form.append('matchId', id)
+    form.append('userId',  user.id)
+    const res = await fetch('/api/upload-chat-file', { method: 'POST', body: form })
+    const { url, error: uploadErr } = await res.json()
+    if (uploadErr || !url) { setImageUploading(false); return }
     await supabase.from('messages').insert({
-      match_id: id, sender_id: user.id, content: '📷 Photo', image_url: signedData.signedUrl,
+      match_id: id, sender_id: user.id, content: '📷 Photo', image_url: url,
     })
     if (fileInputRef.current) fileInputRef.current.value = ''
     setImageUploading(false)
+  }
+
+  /* ── Voice recording (Telegram-style) ── */
+  async function startRecording() {
+    setVoiceError('')
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mr = new MediaRecorder(stream)
+      chunksRef.current = []
+      mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data) }
+      mr.onstop = () => {
+        audioBlobRef.current = new Blob(chunksRef.current, { type: 'audio/webm' })
+        stream.getTracks().forEach(t => t.stop())
+      }
+      mr.start()
+      mediaRecRef.current = mr
+      setRecElapsed(0)
+      setIsRecording(true)
+      recTimerRef.current = setInterval(() => setRecElapsed(s => s + 1), 1000)
+    } catch {
+      setVoiceError('Microphone access denied.')
+    }
+  }
+
+  function cancelRecording() {
+    clearInterval(recTimerRef.current)
+    if (mediaRecRef.current?.state !== 'inactive') mediaRecRef.current?.stop()
+    mediaRecRef.current = null
+    chunksRef.current   = []
+    audioBlobRef.current = null
+    setIsRecording(false)
+    setRecElapsed(0)
+    setVoiceError('')
+  }
+
+  async function stopAndSendVoice() {
+    clearInterval(recTimerRef.current)
+    setIsRecording(false)
+    setSendingVoice(true)
+    setVoiceError('')
+
+    try {
+      // Stop the recorder and wait for the blob to be assembled
+      const blob = await new Promise((resolve, reject) => {
+        const mr = mediaRecRef.current
+        if (!mr || mr.state === 'inactive') {
+          // Already stopped — use whatever chunks we have
+          resolve(new Blob(chunksRef.current, { type: 'audio/webm' }))
+          return
+        }
+        mr.onstop = () => {
+          const b = new Blob(chunksRef.current, { type: 'audio/webm' })
+          // Stop mic tracks
+          try { mr.stream?.getTracks().forEach(t => t.stop()) } catch {}
+          resolve(b)
+        }
+        mr.onerror = (err) => reject(err)
+        mr.stop()
+      })
+
+      if (!blob || blob.size === 0) {
+        setVoiceError('Recording was empty — please try again')
+        setSendingVoice(false)
+        return
+      }
+
+      const form = new FormData()
+      form.append('file',    new File([blob], 'voice.webm', { type: 'audio/webm' }))
+      form.append('matchId', id)
+      form.append('userId',  user.id)
+
+      const res = await fetch('/api/upload-chat-file', { method: 'POST', body: form })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const { url, error: uploadErr } = await res.json()
+
+      if (uploadErr || !url) throw new Error(uploadErr || 'No URL returned')
+
+      const { error: insertErr } = await supabase.from('messages').insert({
+        match_id: id, sender_id: user.id,
+        content:  '🎤 Voice message',
+        image_url: url,
+      })
+      if (insertErr) throw new Error(insertErr.message)
+
+    } catch (err) {
+      console.error('[voice send]', err)
+      setVoiceError('Failed to send — please try again')
+    }
+
+    audioBlobRef.current = null
+    chunksRef.current    = []
+    mediaRecRef.current  = null
+    setSendingVoice(false)
   }
 
   async function handleConfirmStatus() {
@@ -786,16 +884,12 @@ export default function MatchChat() {
           </div>
         )}
 
-        {/* Voice recorder */}
-        {showVoiceRecorder && !isClosed && (
-          <div className="mb-2">
-            <VoiceMessage
-              matchId={id}
-              userId={user?.id}
-              onCancel={() => setShowVoiceRecorder(false)}
-              onSent={() => setShowVoiceRecorder(false)}
-            />
-          </div>
+        {/* Voice error */}
+        {voiceError && (
+          <p className="text-xs px-3 py-2 mb-2 rounded-xl"
+            style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: '#FCA5A5' }}>
+            {voiceError}
+          </p>
         )}
 
         {/* Message input row */}
@@ -804,58 +898,108 @@ export default function MatchChat() {
             {t?.chatClosedMsg || 'Chat closed'} · {st.label}
           </p>
         ) : (
-          <form onSubmit={sendMessage} className="flex gap-2 items-center">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleImageSelect}
-            />
-            {/* Photo button */}
-            <button
-              type="button"
-              disabled={imageUploading}
-              onClick={() => fileInputRef.current?.click()}
-              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl disabled:opacity-40 transition-colors"
-              style={{ border: `1px solid ${HAIRLINE}`, color: FG3, background: 'rgba(255,255,255,0.03)' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(224,123,41,0.40)'; e.currentTarget.style.color = '#E07B29' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = HAIRLINE; e.currentTarget.style.color = FG3 }}
-              title={t?.attachPhoto || 'Attach photo'}
-            >
-              {imageUploading
-                ? <span className="text-xs animate-pulse" style={{ color: FG3 }}>…</span>
-                : <ImagePlus size={18} />}
-            </button>
-            {/* Mic button */}
-            <button
-              type="button"
-              onClick={() => setShowVoiceRecorder(v => !v)}
-              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-colors"
-              style={showVoiceRecorder
-                ? { border: '1px solid rgba(224,123,41,0.40)', color: '#E07B29', background: 'rgba(224,123,41,0.08)' }
-                : { border: `1px solid ${HAIRLINE}`, color: FG3, background: 'rgba(255,255,255,0.03)' }
-              }
-              title="Voice message"
-            >
-              <Mic size={18} />
-            </button>
-            {/* Text input */}
-            <input
-              type="text"
-              placeholder={t?.typeMessage || 'Type a message…'}
-              value={newMessage}
-              onChange={e => { setNewMessage(e.target.value); broadcastTyping() }}
-              className="flex-1 rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors"
-              style={{ background: '#0F1730', border: `1px solid ${HAIRLINE}`, color: FG1 }}
-              onFocus={e => e.target.style.borderColor = 'rgba(224,123,41,0.40)'}
-              onBlur={e => e.target.style.borderColor = HAIRLINE}
-            />
+          <form
+            onSubmit={e => {
+              e.preventDefault()
+              if (isRecording) { stopAndSendVoice(); return }
+              sendMessage(e)
+            }}
+            className="flex gap-2 items-center"
+          >
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
+
+            {/* Photo button — hidden while recording */}
+            {!isRecording && !sendingVoice && (
+              <button
+                type="button"
+                disabled={imageUploading}
+                onClick={() => fileInputRef.current?.click()}
+                className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl disabled:opacity-40 transition-colors"
+                style={{ border: `1px solid ${HAIRLINE}`, color: FG3, background: 'rgba(255,255,255,0.03)' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(224,123,41,0.40)'; e.currentTarget.style.color = '#E07B29' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = HAIRLINE; e.currentTarget.style.color = FG3 }}
+                title={t?.attachPhoto || 'Attach photo'}
+              >
+                {imageUploading ? <span className="text-xs animate-pulse" style={{ color: FG3 }}>…</span> : <ImagePlus size={18} />}
+              </button>
+            )}
+
+            {/* Mic button / recording indicator */}
+            {isRecording ? (
+              /* Cancel recording */
+              <button
+                type="button"
+                onClick={cancelRecording}
+                className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-colors"
+                style={{ border: '1px solid rgba(239,68,68,0.40)', color: '#EF4444', background: 'rgba(239,68,68,0.08)' }}
+                title="Cancel"
+              >
+                <XCircle size={18} />
+              </button>
+            ) : !sendingVoice ? (
+              /* Start recording */
+              <button
+                type="button"
+                onClick={startRecording}
+                className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-colors"
+                style={{ border: `1px solid ${HAIRLINE}`, color: FG3, background: 'rgba(255,255,255,0.03)' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(224,123,41,0.40)'; e.currentTarget.style.color = '#E07B29' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = HAIRLINE; e.currentTarget.style.color = FG3 }}
+                title="Voice message"
+              >
+                <Mic size={18} />
+              </button>
+            ) : null}
+
+            {/* Middle area: text input OR recording UI OR uploading */}
+            {isRecording ? (
+              /* Inline recording display */
+              <div className="flex-1 flex items-center gap-3 rounded-xl px-4 py-2.5"
+                style={{ background: '#0F1730', border: '1px solid rgba(239,68,68,0.30)' }}>
+                <div className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0 animate-pulse" />
+                <span className="text-sm font-mono tabular-nums flex-shrink-0" style={{ color: '#FCA5A5' }}>
+                  {Math.floor(recElapsed / 60)}:{String(recElapsed % 60).padStart(2, '0')}
+                </span>
+                {/* Animated waveform bars */}
+                <div className="flex items-end gap-0.5 flex-shrink-0" style={{ height: 16 }}>
+                  {[0.35, 0.55, 0.45, 0.65, 0.40].map((dur, i) => (
+                    <div key={i} style={{
+                      width: 3, borderRadius: 2, background: '#EF4444',
+                      animation: `vbar ${dur}s ease-in-out infinite alternate`,
+                      animationDelay: `${i * 0.07}s`,
+                    }} />
+                  ))}
+                  <style>{`@keyframes vbar { from { height: 3px } to { height: 14px } }`}</style>
+                </div>
+                <span className="text-xs flex-1" style={{ color: '#6E7A99' }}>Recording… tap Send to finish</span>
+              </div>
+            ) : sendingVoice ? (
+              /* Uploading state */
+              <div className="flex-1 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm animate-pulse"
+                style={{ background: '#0F1730', border: `1px solid ${HAIRLINE}`, color: FG3 }}>
+                <Mic size={14} />
+                Sending voice message…
+              </div>
+            ) : (
+              /* Normal text input */
+              <input
+                type="text"
+                placeholder={t?.typeMessage || 'Type a message…'}
+                value={newMessage}
+                onChange={e => { setNewMessage(e.target.value); broadcastTyping() }}
+                className="flex-1 rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors"
+                style={{ background: '#0F1730', border: `1px solid ${HAIRLINE}`, color: FG1 }}
+                onFocus={e => e.target.style.borderColor = 'rgba(224,123,41,0.40)'}
+                onBlur={e => e.target.style.borderColor = HAIRLINE}
+              />
+            )}
+
+            {/* Single Send button — handles both text and voice */}
             <button
               type="submit"
-              disabled={sending || !newMessage.trim()}
+              disabled={(sendingVoice) || (!isRecording && sending) || (!isRecording && !sendingVoice && !newMessage.trim())}
               className="px-5 py-2.5 rounded-xl text-white font-bold text-sm disabled:opacity-40 transition-opacity hover:opacity-90 active:scale-95 flex-shrink-0"
-              style={{ background: '#E07B29' }}
+              style={{ background: isRecording ? '#EF4444' : '#E07B29' }}
             >
               {t?.sendBtn || 'Send'}
             </button>

@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 import { LogoStacked } from '@/components/Logo'
+import { useLanguage } from '@/lib/LanguageContext'
 
 const CARD_BG  = '#16203A'
 const HAIRLINE = 'rgba(255,255,255,0.07)'
@@ -15,6 +16,8 @@ function AuthForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tab = searchParams.get('tab')
+  const { t, isFa } = useLanguage()
+  const fontStyle = isFa ? { fontFamily: "'Vazirmatn', sans-serif" } : {}
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -27,13 +30,13 @@ function AuthForm() {
   }, [router])
 
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full max-w-md" style={fontStyle}>
       <div className="text-center mb-8">
         <div className="flex justify-center mb-4">
           <LogoStacked dark={true} markSize={64} nameSize={20} />
         </div>
         <p className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
-          {tab === 'signup' ? 'Create your free account' : 'Welcome back'}
+          {tab === 'signup' ? (t?.signUpDesc || 'Create your free account') : (t?.signInDesc || 'Welcome back')}
         </p>
       </div>
 
@@ -89,7 +92,7 @@ function AuthForm() {
       </div>
 
       <p className="text-center text-xs mt-6" style={{ color: 'rgba(255,255,255,0.25)' }}>
-        By continuing, you agree to our Terms of Service and Privacy Policy.
+        {t?.authTerms || 'By continuing, you agree to our Terms of Service and Privacy Policy.'}
       </p>
     </div>
   )
@@ -100,7 +103,7 @@ export default function AuthPage() {
     <div className="min-h-screen flex items-center justify-center px-4 py-12"
          style={{ background: '#0B1220' }}>
       <Suspense fallback={
-        <div className="text-sm" style={{ color: 'rgba(255,255,255,0.30)' }}>Loading...</div>
+        <div className="text-sm" style={{ color: 'rgba(255,255,255,0.30)' }}>Loading…</div>
       }>
         <AuthForm />
       </Suspense>

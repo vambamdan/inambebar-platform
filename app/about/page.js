@@ -9,22 +9,15 @@ const FG1      = '#F1F4FB'
 const FG2      = '#A6B0CC'
 const FG3      = '#6E7A99'
 
-const SERVICES_EN = [
-  { Icon: Plane,   title: 'Traveler Luggage Space', desc: 'Travelers post upcoming trips and available luggage space. Senders browse, connect, and arrange delivery. Both parties benefit.' },
-  { Icon: Package, title: 'Shipment Requests',       desc: 'Need something sent? Post a request describing your package. Travelers on your route see it and offer to carry it.' },
-  { Icon: Users,   title: 'Travel Companion',        desc: 'Need someone to travel alongside you or a family member? Our Travel Companion service connects people making the same journey.' },
-]
-
-const SERVICES_FA = [
-  { Icon: Plane,   title: 'ظرفیت بار مسافر',     desc: 'مسافرانی که قرار است پرواز کنند، فضای اضافه چمدان خود را ثبت می‌کنند. فرستنده‌ها می‌توانند آن‌ها را پیدا کنند و بسته را بفرستند.' },
-  { Icon: Package, title: 'درخواست ارسال بسته', desc: 'اگر می‌خواهید بسته‌ای بفرستید، درخواستتان را ثبت کنید. مسافرانی که در همان مسیر سفر می‌کنند پیشنهاد حمل می‌دهند.' },
-  { Icon: Users,   title: 'همراه سفر',           desc: 'نیاز دارید کسی همراه سفرتان باشد؟ سرویس همراه سفر ما این ارتباط را ممکن می‌سازد.' },
-]
-
 export default function AboutPage() {
-  const { isFa } = useLanguage()
+  const { t, isFa, lang } = useLanguage()
   const fontStyle = isFa ? { fontFamily: "'Vazirmatn', sans-serif" } : {}
-  const services  = isFa ? SERVICES_FA : SERVICES_EN
+
+  const services = [
+    { Icon: Plane,   title: t?.aboutSvc1Title, desc: t?.aboutSvc1Desc },
+    { Icon: Package, title: t?.aboutSvc2Title, desc: t?.aboutSvc2Desc },
+    { Icon: Users,   title: t?.aboutSvc3Title, desc: t?.aboutSvc3Desc },
+  ]
 
   return (
     <div className="min-h-screen" style={{ background: '#0B1220', paddingTop: 72, ...fontStyle }} dir={isFa ? 'rtl' : 'ltr'}>
@@ -33,15 +26,13 @@ export default function AboutPage() {
         {/* ── Header ── */}
         <div className="mb-12">
           <p className="text-xs font-semibold mb-3 tracking-widest uppercase" style={{ color: '#E07B29' }}>
-            {isFa ? 'درباره ما' : 'About Us'}
+            {t?.aboutUs || 'About Us'}
           </p>
           <h1 className="text-4xl font-bold tracking-tight mb-4" style={{ color: FG1, letterSpacing: '-0.025em' }}>
-            {isFa ? 'اینم ببر' : 'Inambebar — اینم ببر'}
+            {t?.aboutHeading || 'Inambebar — اینم ببر'}
           </h1>
           <p className="text-lg leading-relaxed" style={{ color: FG2 }}>
-            {isFa
-              ? 'پلتفرمی برای ارتباط مسافرین ایرانی با فرستنده‌های بسته در سراسر جهان'
-              : '"Take This Too" — Connecting the Iranian diaspora through trusted peer-to-peer delivery.'}
+            {t?.aboutSubheading || '"Take This Too" — Connecting the Iranian diaspora through trusted peer-to-peer delivery.'}
           </p>
         </div>
 
@@ -54,12 +45,10 @@ export default function AboutPage() {
           </div>
           <div>
             <p className="text-sm font-semibold mb-1.5" style={{ color: '#F5B380' }}>
-              {isFa ? 'نکته مهم' : 'Important Note'}
+              {t?.aboutNoteTitle || 'Important Note'}
             </p>
             <p className="text-sm leading-relaxed" style={{ color: '#FAD2B0' }}>
-              {isFa
-                ? 'اینم ببر یک پروژه است که با هدف کمک به جامعه ایرانی ایجاد شده. در سال اول راه‌اندازی، این سرویس کاملاً رایگان ارائه می‌شود.'
-                : 'Inambebar was created to help the Iranian diaspora community. During our first year of operation, this service is provided completely free of charge. Our primary goal is to help people.'}
+              {t?.aboutNoteText || 'Inambebar was created to help the Iranian diaspora community. During our first year of operation, this service is provided completely free of charge. Our primary goal is to help people.'}
             </p>
           </div>
         </div>
@@ -70,19 +59,17 @@ export default function AboutPage() {
           {/* Why section */}
           <section className="rounded-2xl p-7" style={{ background: CARD_BG, border: `1px solid ${HAIRLINE}` }}>
             <h2 className="text-lg font-semibold mb-4" style={{ color: FG1, letterSpacing: '-0.015em' }}>
-              {isFa ? 'چرا اینم ببر؟' : 'Why Inambebar?'}
+              {t?.aboutWhyTitle || 'Why Inambebar?'}
             </h2>
             <p className="leading-relaxed text-sm" style={{ color: FG2 }}>
-              {isFa
-                ? 'هر ایرانی مهاجر این داستان را می‌شناسد: یک کیف پر از پسته، زعفران، یا دارو که باید به ایران برسد. یا یک لپتاپ که باید از ایران بیاید. ارسال از طریق پست بین‌المللی گران، کند، و گاهی غیرممکن است. اینم ببر برای حل همین مشکل ساخته شده.'
-                : 'Every member of the Iranian diaspora knows the story: a bag full of saffron, pistachios, or medicine that needs to get to Iran. Or a laptop that needs to come back. International shipping is expensive, slow, and sometimes impossible through official channels. Inambebar was built to solve exactly this problem — by connecting people who are already making the trip with people who need something carried.'}
+              {t?.aboutWhyText || 'Every member of the Iranian diaspora knows the story: a bag full of saffron, pistachios, or medicine that needs to get to Iran. Or a laptop that needs to come back. International shipping is expensive, slow, and sometimes impossible through official channels. Inambebar was built to solve exactly this problem.'}
             </p>
           </section>
 
           {/* Services */}
           <section>
             <h2 className="text-lg font-semibold mb-4 px-1" style={{ color: FG1, letterSpacing: '-0.015em' }}>
-              {isFa ? 'چطور کار می‌کند؟' : 'What We Offer'}
+              {t?.aboutWhatWeOffer || 'What We Offer'}
             </h2>
             <div className="space-y-3">
               {services.map(({ Icon, title, desc }) => (
@@ -105,39 +92,37 @@ export default function AboutPage() {
             <div className="flex items-center gap-2 mb-4">
               <ShieldCheck size={18} style={{ color: '#2EBD7A' }} strokeWidth={1.8} />
               <h2 className="text-lg font-semibold" style={{ color: FG1, letterSpacing: '-0.015em' }}>
-                {isFa ? 'امنیت و اعتماد' : 'Safety & Trust'}
+                {t?.aboutSafetyTitle || 'Safety & Trust'}
               </h2>
             </div>
             <p className="leading-relaxed text-sm" style={{ color: FG2 }}>
-              {isFa
-                ? 'همه کاربران باید هویتشان را با مدرک معتبر و عکس سلفی تأیید کنند. تمام پیام‌ها در پلتفرم ثبت می‌شوند. عکس بسته هنگام تحویل گرفته می‌شود. این‌ها همه برای ایجاد یک محیط امن برای هر دو طرف است.'
-                : "Every user must verify their identity with a government-issued ID and a live selfie before transacting. All messages are logged on our platform. Packages are photographed at handoff. These aren't just features — they're the reason you can trust a stranger with your package."}
+              {t?.aboutSafetyText || "Every user must verify their identity with a government-issued ID and a live selfie before transacting. All messages are logged on our platform. Packages are photographed at handoff. These aren't just features — they're the reason you can trust a stranger with your package."}
             </p>
           </section>
 
           {/* Routes */}
-          {!isFa && (
-            <section className="rounded-2xl p-7" style={{ background: CARD_BG, border: `1px solid ${HAIRLINE}` }}>
-              <div className="flex items-center gap-2 mb-4">
-                <MapPin size={18} style={{ color: '#E07B29' }} strokeWidth={1.8} />
-                <h2 className="text-lg font-semibold" style={{ color: FG1, letterSpacing: '-0.015em' }}>Our Routes</h2>
-              </div>
-              <p className="leading-relaxed text-sm" style={{ color: FG2 }}>
-                We serve the most important corridors for the Iranian diaspora: Tehran, Mashhad, Shiraz, Isfahan connected to Toronto, Dubai, London, Stockholm, Frankfurt, Amsterdam, Los Angeles, Paris, and beyond. If Iranians fly it, we serve it.
-              </p>
-            </section>
-          )}
+          <section className="rounded-2xl p-7" style={{ background: CARD_BG, border: `1px solid ${HAIRLINE}` }}>
+            <div className="flex items-center gap-2 mb-4">
+              <MapPin size={18} style={{ color: '#E07B29' }} strokeWidth={1.8} />
+              <h2 className="text-lg font-semibold" style={{ color: FG1, letterSpacing: '-0.015em' }}>
+                {t?.aboutRoutesTitle || 'Our Routes'}
+              </h2>
+            </div>
+            <p className="leading-relaxed text-sm" style={{ color: FG2 }}>
+              {t?.aboutRoutesText || 'We serve the most important corridors for the Iranian diaspora: Tehran, Mashhad, Shiraz, Isfahan connected to Toronto, Dubai, London, Stockholm, Frankfurt, Amsterdam, Los Angeles, Paris, and beyond. If Iranians fly it, we serve it.'}
+            </p>
+          </section>
 
           {/* Contact */}
           <section className="rounded-2xl p-7" style={{ background: CARD_BG, border: `1px solid ${HAIRLINE}` }}>
             <div className="flex items-center gap-2 mb-4">
               <Mail size={18} style={{ color: FG2 }} strokeWidth={1.8} />
               <h2 className="text-lg font-semibold" style={{ color: FG1, letterSpacing: '-0.015em' }}>
-                {isFa ? 'تماس با ما' : 'Contact'}
+                {t?.aboutContactTitle || 'Contact'}
               </h2>
             </div>
             <p className="text-sm" style={{ color: FG2 }}>
-              {isFa ? 'سوال دارید؟ با ما در تماس باشید:' : 'Questions? Reach us at'}{' '}
+              {t?.aboutContactText || 'Questions? Reach us at'}{' '}
               <a href="mailto:info@inambebar.com" className="font-semibold transition-colors hover:opacity-80"
                 style={{ color: '#E07B29' }}>
                 info@inambebar.com
@@ -151,7 +136,7 @@ export default function AboutPage() {
           <Link href="/auth?tab=signup"
             className="btn-primary inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-white font-semibold text-sm"
             style={{ background: '#E07B29' }}>
-            {isFa ? 'همین الان عضو شوید' : 'Join Inambebar Free'}
+            {t?.aboutJoinBtn || 'Join Inambebar Free'}
             <ArrowRight size={15} />
           </Link>
         </div>

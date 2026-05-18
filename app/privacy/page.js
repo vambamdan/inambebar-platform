@@ -11,6 +11,15 @@ export default function Privacy() {
 
       <h1 className="text-3xl font-black mb-2" style={{ color: FG1, letterSpacing: '-0.025em' }}>Privacy Policy</h1>
       <p className="text-sm mb-1" style={{ color: FG3 }}>Last updated: 30 April 2026</p>
+
+      {/* Trilingual legal notice */}
+      <div className="rounded-xl px-4 py-3 mb-6 text-xs leading-relaxed"
+        style={{ background: 'rgba(224,123,41,0.06)', border: '1px solid rgba(224,123,41,0.18)', color: '#F5B380' }}>
+        <p className="mb-1">This privacy policy is available in English only. The English version is the legally binding version.</p>
+        <p className="mb-1" dir="rtl" style={{ fontFamily: "'Vazirmatn', sans-serif" }}>این سیاست حریم خصوصی فقط به زبان انگلیسی در دسترس است. نسخه انگلیسی از نظر قانونی الزام‌آور است.</p>
+        <p>Bu gizlilik politikası yalnızca İngilizce olarak mevcuttur. İngilizce sürüm yasal olarak bağlayıcıdır.</p>
+      </div>
+
       <p className="text-sm mb-10 leading-relaxed" style={{ color: FG3 }}>
         This policy is provided in accordance with Articles 13 and 14 of the EU General Data Protection Regulation (GDPR) and the German Federal Data Protection Act (BDSG).
       </p>
